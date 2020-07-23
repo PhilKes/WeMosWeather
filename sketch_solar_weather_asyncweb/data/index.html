@@ -6,51 +6,42 @@
 		<meta name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no'>
 		<!-- Bootstrap CSS -->
 		<link rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css' integrity='sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk' crossorigin='anonymous'>
-		<title>
-			WeMosWeather
-		</title>
+		<link rel='stylesheet' href='/style.css'>
+		<title>WeMosWeather</title>
 	</head>
 	<body>
 		<div class='container-fluid'>
 			<div class='row'>
 				<div class='col-md-12'>
-					<span class='badge badge-default'>
-					Temperature
-					</span>
+					<span class='badge badge-default'>Temperature</span>
 					<div class='progress'>
-						<div class='progress-bar progress-bar-striped'  style='width:"+String(temp[idx]/tempMax*100)+ "%; background-color: red !important;'>
-							String(temp[idx])+" C°
+						<div class='progress-bar progress-bar-striped temperature' style='width:%TEMP_PERCENT%%%;'>
+							%TEMP% C°
 						</div>
 					</div>
-					<span class='badge badge-default'>
-					Pressure
-					</span>
+					<span class='badge badge-default'>Pressure</span>
 					<div class='progress'>
-						<div class='progress-bar progress-bar-striped' style='width:"+String(pressure[idx]/pressureMax*100)+ "%; background-color: purple !important;'>
-							String(pressure[idx])+" hPa
+						<div class='progress-bar progress-bar-striped pressure' style='width:%PRESS_PERCENT%%%;'>
+							%PRESS% hPa
 						</div>
 					</div>
-					<span class='badge badge-default'>
-					Altitude
-					</span>
+					<span class='badge badge-default'>Altitude</span>
 					<div class='progress'>
-						<div class='progress-bar progress-bar-striped' style='width:"+String(altitude[idx]/altitudeMax*100)+ "%; background-color: green !important;' >
-							String(altitude[idx])+" m
+						<div class='progress-bar progress-bar-striped altitude' style='width:%ALT_PERCENT%%%;' >
+							%ALT% m
 						</div>
 					</div>
-					<span class='badge badge-default'>
-					Humidity
-					</span>
+					<span class='badge badge-default'>Humidity</span>
 					<div class='progress'>
-						<div class='progress-bar progress-bar-striped' style='width:"+String(humidity[idx]/humidityMax*100)+ "%; background-color: blue !important;'>
-							String(humidity[idx])+" %
+						<div class='progress-bar progress-bar-striped humidity' style='width:%HUM_PERCENT%%%;'>
+							%HUM% %
 						</div>
 					</div>
 				</div>
 			</div>
 			<div class='row'>
 				<div class='col-md-12'>
-					<canvas id='myChartÄ width='800' height='200' />
+					<canvas id='myChart' width='800' height='200' />
 				</div>
 			</div>
 		</div>
@@ -59,8 +50,8 @@
 		<script src='https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js' integrity='sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI' crossorigin='anonymous'></script>
 		<script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js'></script>
 		<script>
-			var xTime = [ "+ getDataTimesString()+" ];
-			var yTemp = [ "+ getDataTempString()+" ];
+			var xTime = [ %DATA_TIMES% ];
+			var yTemp = [ %DATA_TEMP% ];
 			var ctx = document.getElementById('myChart');
 			var myChart = new Chart(ctx, {
 			  type: 'line',

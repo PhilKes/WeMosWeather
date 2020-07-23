@@ -7,6 +7,13 @@
 #### Web Page
 * Basic HTML Page to View Station Data
 * Bootstrap 
+
+#### Sketch
+##### Libraries
+*  [ESPAsyncWebServer](https://github.com/me-no-dev/ESPAsyncWebServer)
+*  [ESPAsyncTCP](https://github.com/me-no-dev/ESPAsyncTCP)
+*  [ESP8266-FS-Uploader](https://randomnerdtutorials.com/install-esp8266-filesystem-uploader-arduino-ide/)
+
 ##### Sources
 * [Instructables](https://www.instructables.com/id/Solar-Powered-WiFi-Weather-Station/)
 * [Esp8266 Bootstrap Example](https://diyprojects.io/bootstrap-create-beautiful-web-interface-projects-esp8266/#.XxcEGJ4zaUk)
