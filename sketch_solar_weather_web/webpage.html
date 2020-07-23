@@ -14,43 +14,68 @@
 		<div class='container-fluid'>
 			<div class='row'>
 				<div class='col-md-12'>
-					<span class='badge badge-default'></span> <span class='badge badge-default'>
+					<span class='badge badge-default'>
 					Temperature
 					</span>
 					<div class='progress'>
-						<div class='progress-bar progress-bar-striped' >
-							70%
+						<div class='progress-bar progress-bar-striped'  style='width:"+String(temp[idx]/tempMax*100)+ "%; background-color: red !important;'>
+							String(temp[idx])+" C°
 						</div>
 					</div>
-					<span class='badge badge-default'></span> <span class='badge badge-default'>
+					<span class='badge badge-default'>
 					Pressure
 					</span>
 					<div class='progress'>
-						<div class='progress-bar progress-bar-striped' style='width:70%'>
-							70%
+						<div class='progress-bar progress-bar-striped' style='width:"+String(pressure[idx]/pressureMax*100)+ "%; background-color: purple !important;'>
+							String(pressure[idx])+" hPa
 						</div>
 					</div>
 					<span class='badge badge-default'>
 					Altitude
 					</span>
 					<div class='progress'>
-						<div class='progress-bar progress-bar-striped' style='width:70%'>
-							70%
+						<div class='progress-bar progress-bar-striped' style='width:"+String(altitude[idx]/altitudeMax*100)+ "%; background-color: green !important;' >
+							String(altitude[idx])+" m
 						</div>
 					</div>
 					<span class='badge badge-default'>
 					Humidity
 					</span>
 					<div class='progress'>
-						<div class='progress-bar progress-bar-striped' style='width:70%'>
-							70%
+						<div class='progress-bar progress-bar-striped' style='width:"+String(humidity[idx]/humidityMax*100)+ "%; background-color: blue !important;'>
+							String(humidity[idx])+" %
 						</div>
 					</div>
 				</div>
 			</div>
+			<div class='row'>
+				<div class='col-md-12'>
+					<canvas id='myChartÄ width='800' height='200' />
+				</div>
+			</div>
 		</div>
-		<script src='https://code.jquery.com/jquery-3.5.1.slim.min.js' integrity='sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj' crossorigin='anonymous' />
-		<script src='https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js' integrity='sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo' crossorigin='anonymous' />
-		<script src='https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js' integrity='sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI' crossorigin='anonymous' />
+		<script src='https://code.jquery.com/jquery-3.5.1.slim.min.js' integrity='sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj' crossorigin='anonymous' ></script>
+		<script src='https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js' integrity='sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo' crossorigin='anonymous'></script>
+		<script src='https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js' integrity='sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI' crossorigin='anonymous'></script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js'></script>
+		<script>
+			var xTime = [ "+ getDataTimesString()+" ];
+			var yTemp = [ "+ getDataTempString()+" ];
+			var ctx = document.getElementById('myChart');
+			var myChart = new Chart(ctx, {
+			  type: 'line',
+			  data: {
+				labels: xTime,
+				datasets: [
+				  { 
+					data: yTemp,
+					label: 'Temperature in C°',
+					borderColor: 'red',
+					fill: false
+				  }
+				]
+			  }	
+			});
+		</script>
 	</body>
 </html>
