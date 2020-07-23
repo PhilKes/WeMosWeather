@@ -15,25 +15,25 @@
 				<div class='col-md-12'>
 					<span class='badge badge-default'>Temperature</span>
 					<div class='progress'>
-						<div class='progress-bar progress-bar-striped temperature' style='width:%TEMP_PERCENT%%%;'>
-							%TEMP% C°
+						<div id='temperature' class='progress-bar progress-bar-striped temperature' style='width:%TEMP_PERCENT%%%;'>
+							
 						</div>
 					</div>
 					<span class='badge badge-default'>Pressure</span>
 					<div class='progress'>
-						<div class='progress-bar progress-bar-striped pressure' style='width:%PRESS_PERCENT%%%;'>
+						<div id='pressure' class='progress-bar progress-bar-striped pressure' style='width:%PRESS_PERCENT%%%;'>
 							%PRESS% hPa
 						</div>
 					</div>
 					<span class='badge badge-default'>Altitude</span>
 					<div class='progress'>
-						<div class='progress-bar progress-bar-striped altitude' style='width:%ALT_PERCENT%%%;' >
+						<div id='altitude' class='progress-bar progress-bar-striped altitude' style='width:%ALT_PERCENT%%%;' >
 							%ALT% m
 						</div>
 					</div>
 					<span class='badge badge-default'>Humidity</span>
 					<div class='progress'>
-						<div class='progress-bar progress-bar-striped humidity' style='width:%HUM_PERCENT%%%;'>
+						<div id='humidity' class='progress-bar progress-bar-striped humidity' style='width:%HUM_PERCENT%%%;'>
 							%HUM% %
 						</div>
 					</div>
@@ -50,23 +50,141 @@
 		<script src='https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js' integrity='sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI' crossorigin='anonymous'></script>
 		<script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js'></script>
 		<script>
-			var xTime = [ %DATA_TIMES% ];
-			var yTemp = [ %DATA_TEMP% ];
-			var ctx = document.getElementById('myChart');
-			var myChart = new Chart(ctx, {
-			  type: 'line',
-			  data: {
-				labels: xTime,
-				datasets: [
-				  { 
-					data: yTemp,
-					label: 'Temperature in C°',
-					borderColor: 'red',
-					fill: false
-				  }
-				]
-			  }	
-			});
+		
+			var temp=%TEMP%;
+			var hum=%HUM%;
+			var alt=%ALT%;
+			var press=%PRESS%;
+			
+			var tempChart;
+			
+			var tempChartTime = [];
+			var tempChartData = [];
+			
+			setInterval(function ( ) {
+			  var xhttp = new XMLHttpRequest();
+			  xhttp.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+				  temp=parseFloat(this.responseText);
+				  redrawData();
+				}
+			  };
+			  xhttp.open("GET", "/temperature", true);
+			  xhttp.send();
+			}, %UPDATE_DELAY% );
+			setInterval(function ( ) {
+			  var xhttp = new XMLHttpRequest();
+			  xhttp.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+				  hum=parseFloat(this.responseText);
+				  redrawData();
+				}
+			  };
+			  xhttp.open("GET", "/humidity", true);
+			  xhttp.send();
+			}, %UPDATE_DELAY% );
+			setInterval(function ( ) {
+			  var xhttp = new XMLHttpRequest();
+			  xhttp.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+				  alt=parseFloat(this.responseText);
+				  redrawData();
+				}
+			  };
+			  xhttp.open("GET", "/altitude", true);
+			  xhttp.send();
+			}, %UPDATE_DELAY% );
+			
+			setInterval(function ( ) {
+			  var xhttp = new XMLHttpRequest();
+			  xhttp.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+				  alt=parseFloat(this.responseText);
+				  redrawData();
+				}
+			  };
+			  xhttp.open("GET", "/pressure", true);
+			  xhttp.send();
+			}, %UPDATE_DELAY% );
+
+			setInterval(function ( ) {
+			  var xhttp = new XMLHttpRequest();
+			  xhttp.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					let resp= JSON.parse(this.responseText);
+					console.log("Response",resp)
+					//drawGraph(resp.data,resp.time);
+					if(resp.time.length < tempChartTime.length )
+						drawGraph(resp.data,resp.time);
+					else
+						addData(tempChart, resp.time[resp.time.length-1], resp.data[resp.data.length-1]);
+				}
+			  };
+			  xhttp.open("GET", "/temperaturedata", true);
+			  xhttp.send();
+			}, %UPDATE_DELAY% );
+			
+			function redrawData(){
+				 document.getElementById("temperature").innerHTML = temp+" C°";
+				 let s=(temp/%TEMP_MAX%)*100+"%%";
+				 document.getElementById("temperature").style.width = s;
+				 
+				 document.getElementById("humidity").innerHTML = hum+" %%";
+				 s=(hum/%HUM_MAX%)*100+"%%";
+				 document.getElementById("humidity").style.width = s;
+				  
+				 document.getElementById("altitude").innerHTML = alt+" m";
+				 s=(alt/%ALT_MAX%)*100+"%%";
+				 document.getElementById("altitude").style.width = s;
+				  
+				 document.getElementById("pressure").innerHTML = press+" hPa";
+				 s=(press/%PRESS_MAX%)*100+"%%";
+				 document.getElementById("pressure").style.width = s;
+			}
+			
+			function addData(chart, label, data) {
+				chart.data.labels.push(label);
+				chart.data.datasets.forEach((dataset) => {
+					dataset.data.push(data);
+				});
+				chart.update();
+			}
+			
+			function drawGraph(data,time){
+				tempChartTime = time;
+				tempChartData = data;
+				let ctx = document.getElementById('myChart');
+				tempChart = new Chart(ctx, {
+					type: 'line',
+					data: {
+						labels: tempChartTime,
+						datasets: [
+							{ 
+								data: tempChartData,
+								label: 'Temperature in C°',
+								borderColor: 'red',
+								fill: false
+							}
+						]
+					},
+					options:{
+					responsive: true,                        
+						scales: {
+							yAxes: [
+								{
+									ticks: {
+										min: -10, 
+										max: 40,
+										beginAtZero: false,
+										stepSize: 5
+									}
+								}
+							]
+						}
+					}
+				});
+			}
+			drawGraph([ %DATA_TIMES% ], [ %DATA_TEMP% ]);
 		</script>
 	</body>
 </html>

@@ -33,7 +33,7 @@ char pass[] = "3616949541664967";
 AsyncWebServer server(80);
 
 int idx = 0;
-const int sizeData = 100;
+const int sizeData = 10;
 String dataTimes[sizeData] = {""};
 
 float humidity[sizeData] = {0};
@@ -45,8 +45,11 @@ float tempMax = 50;
 float pressure[100] = {0};
 float pressureMax = 1200;
 
-float altitude[100] = {0};
+float altitude[288] = {0};
 float altitudeMax = 1000;
+
+unsigned int lastTime = 0;
+unsigned int periodTimeInMs = 300000;
 
 String getTemperature() {
   return String(temp[idx]);
@@ -67,17 +70,17 @@ String getAltitude() {
 
 String getDataTimesString() {
   String s = "";
-  for (int i = 0; i < idx; i++) {
+  for (int i = 0; i <= idx; i++) {
     s += "\"" + dataTimes[i] + "\",";
   }
   s.remove(s.length() - 1);
   return s;
 }
 
-String getDataTempString() {
+String getDataListString(float data[]) {
   String s = "";
-  for (int i = 0; i < idx; i++) {
-    s += String(temp[i]) + ",";
+  for (int i = 0; i <= idx; i++) {
+    s += String(data[i]) + ",";
   }
   s.remove(s.length() - 1);
   return s;
@@ -102,6 +105,22 @@ String processor(const String& var) {
   {
     return getAltitude();
   }
+  else if ( var ==  "TEMP_MAX")
+  {
+    return String(tempMax);
+  }
+  else if ( var ==  "HUM_MAX")
+  {
+    return String(humidityMax);
+  }
+  else if ( var ==  "PRESS_MAX")
+  {
+    return String(pressureMax);
+  }
+  else if ( var ==  "ALT_MAX")
+  {
+    return String(altitudeMax);
+  }
   else if ( var ==  "TEMP_PERCENT")
   {
     return String(temp[idx] / tempMax * 100);
@@ -124,13 +143,24 @@ String processor(const String& var) {
   }
   else if ( var ==  "DATA_TEMP")
   {
-    return getDataTempString();
+    return getDataListString(temp);
+  }
+  else if ( var ==  "UPDATE_DELAY")
+  {
+    return String(periodTimeInMs);
   }
   else
   {
     return "DATA_NOT_FOUND";
   }
 
+}
+
+String getJSONDataWithTime(float data[])
+{
+    String s="{\"data\":["+getDataListString(data)+"],";
+    s+= "\"time\":["+getDataTimesString()+"]}";
+    return s;
 }
 
 void setup() {
@@ -185,8 +215,14 @@ void setup() {
     request->send_P(200, "text/plain", getAltitude().c_str());
   });
 
+ server.on("/temperaturedata", HTTP_GET, [](AsyncWebServerRequest * request) {
+    request->send_P(200, "application/json",(getJSONDataWithTime(temp)).c_str());
+  });
+
+  timeClient.begin();
   // Start server
   server.begin();
+  initializeData();
 }
 
 void initializeData()
@@ -198,11 +234,10 @@ void initializeData()
     humidity[idx] = 0;
     dataTimes[idx] = "";
   }
-  idx = 0;
+  idx = -1;
 }
 
-unsigned int lastTime = 0;
-unsigned int periodTimeInMs = 5000;
+
 void loop() {
   if (millis() - lastTime >= periodTimeInMs)
   {
