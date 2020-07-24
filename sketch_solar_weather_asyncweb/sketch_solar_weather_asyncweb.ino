@@ -23,7 +23,9 @@ BME280 bme280;
 
 WiFiUDP ntpUDP;
 
-NTPClient timeClient(ntpUDP, "0.de.pool.ntp.org", 7200, 5000);
+unsigned int periodTimeInMs = 300000;
+
+NTPClient timeClient(ntpUDP, "0.de.pool.ntp.org", 7200, periodTimeInMs);
 
 // Replace with your network credentials
 char ssid[] = "WLAN Ke";
@@ -33,23 +35,20 @@ char pass[] = "3616949541664967";
 AsyncWebServer server(80);
 
 int idx = 0;
-const int sizeData = 10;
+const int sizeData = 288;
 String dataTimes[sizeData] = {""};
 
 float humidity[sizeData] = {0};
 float humidityMax = 100;
 
-float temp[100] = {0};
+float temp[sizeData] = {0};
 float tempMax = 50;
 
-float pressure[100] = {0};
+float pressure[sizeData] = {0};
 float pressureMax = 1200;
 
-float altitude[288] = {0};
+float altitude[sizeData] = {0};
 float altitudeMax = 1000;
-
-unsigned int lastTime = 0;
-unsigned int periodTimeInMs = 300000;
 
 String getTemperature() {
   return String(temp[idx]);
@@ -237,25 +236,25 @@ void initializeData()
   idx = -1;
 }
 
+void readNewData(){
+  idx++;
+  if (idx >= sizeData)
+  {
+    initializeData();
+  }
+
+  timeClient.update();
+  dataTimes[idx] = timeClient.getFormattedTime();
+
+  temp[idx] = bme280.getTemperature();
+  pressure[idx] = bme280.getPressure() / 100.0 ; // pressure in hPa
+  altitude[idx] = bme280.calcAltitude(pressure[idx]);
+  humidity[idx] = bme280.getHumidity();
+
+  Serial.println(dataTimes[idx] + "  " + "Temp: " + String(temp[idx]) + "C° Humidity: " + String(humidity[idx]) + " Pressure: " + String(pressure[idx]) + "hPa" + " Altitude: " + String(altitude[idx]));
+}
 
 void loop() {
-  if (millis() - lastTime >= periodTimeInMs)
-  {
-    idx++;
-    if (idx >= sizeData)
-    {
-      initializeData();
-    }
-
-    timeClient.update();
-    dataTimes[idx] = timeClient.getFormattedTime();
-
-    temp[idx] = bme280.getTemperature();
-    pressure[idx] = bme280.getPressure() / 100.0 ; // pressure in hPa
-    altitude[idx] = bme280.calcAltitude(pressure[idx]);
-    humidity[idx] = bme280.getHumidity();
-
-    Serial.println(dataTimes[idx] + "  " + "Temp: " + String(temp[idx]) + "C° Humidity: " + String(humidity[idx]) + " Pressure: " + String(pressure[idx]) + "hPa" + " Altitude: " + String(altitude[idx]));
-    lastTime = millis();
-  }
+     readNewData();
+     delay(periodTimeInMs);
 }

@@ -16,7 +16,7 @@
 					<span class='badge badge-default'>Temperature</span>
 					<div class='progress'>
 						<div id='temperature' class='progress-bar progress-bar-striped temperature' style='width:%TEMP_PERCENT%%%;'>
-							
+							%TEMP% C°
 						</div>
 					</div>
 					<span class='badge badge-default'>Pressure</span>
@@ -184,7 +184,7 @@
 					}
 				});
 			}
-			drawGraph([ %DATA_TIMES% ], [ %DATA_TEMP% ]);
+			drawGraph([ %DATA_TEMP% ],[ %DATA_TIMES% ]);
 		</script>
 	</body>
 </html>
