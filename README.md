@@ -9,14 +9,23 @@
 * Bootstrap
 
 #### Android App
+<img src="/assets/mockup_dashboard.png" width="180">
+* Fetch Data from Thingspeak Server
+* Display Data on UI Dashboard
+* History to show old Data
+
+##### Dependencies
 * [HelloCharts](https://github.com/lecho/hellocharts-android)
 * [Material Design](https://material.io/components)
 
 #### Sketch
-##### Libraries
-*  [ESPAsyncWebServer](https://github.com/me-no-dev/ESPAsyncWebServer)
-*  [ESPAsyncTCP](https://github.com/me-no-dev/ESPAsyncTCP)
-*  [ESP8266-FS-Uploader](https://randomnerdtutorials.com/install-esp8266-filesystem-uploader-arduino-ide/)
+* Post Sensor Data to Thingspeak in interval
+
+##### Dependencies
+* [Thingspeak](https://thingspeak.com/)
+* [ESPAsyncWebServer](https://github.com/me-no-dev/ESPAsyncWebServer)
+* [ESPAsyncTCP](https://github.com/me-no-dev/ESPAsyncTCP)
+* [ESP8266-FS-Uploader](https://randomnerdtutorials.com/install-esp8266-filesystem-uploader-arduino-ide/)
 
 ##### Sources
 * [Instructables](https://www.instructables.com/id/Solar-Powered-WiFi-Weather-Station/)

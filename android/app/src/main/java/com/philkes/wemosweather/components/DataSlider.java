@@ -10,6 +10,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.philkes.wemosweather.R;
 
 import lecho.lib.hellocharts.model.PieChartData;
 import lecho.lib.hellocharts.model.SliceValue;
@@ -36,12 +37,19 @@ public class DataSlider {
 
     private String TAG="WeMosWeather";
 
-    public DataSlider(Context context, PieChartView chart, float maxValue, int color) {
+    public DataSlider(Context context,
+                      PieChartView chart,
+                      String label,
+                      String units,
+                      float maxValue,
+                      int color) {
         this.chart=chart;
         this.maxValue=maxValue;
         this.context=context;
         this.color=color;
+        setUnits(units);
         initialize();
+        setLabel(label);
     }
 
     private void initialize() {
@@ -50,7 +58,7 @@ public class DataSlider {
         float tmp=0.0f;
 
         SliceValue sliceValue=new SliceValue(tmp, color);
-        sliceValue.setLabel(tmp + "");
+        sliceValue.setLabel(tmp + units);
         values.add(sliceValue);
         sliceValue=new SliceValue(maxValue - tmp, Color.parseColor("#FFFFFF"));
         sliceValue.setLabel("");
@@ -68,10 +76,13 @@ public class DataSlider {
         // Get font size from dimens.xml and convert it to sp(library uses sp values).
         data.setCenterText1FontSize(ChartUtils.px2sp(context.getResources().getDisplayMetrics().scaledDensity,
                 (int) LABEL_SIZE-5));
+        data.setCenterText1Color(context.getResources().getColor(R.color.actionBarText));
+        data.setCenterText2Color(context.getResources().getColor(R.color.actionBarText));
         //Typeface tf = Typeface.createFromAsset(getActivity().getAssets(), "Roboto-Italic.ttf");
         //data.setCenterText2Typeface(tf);
         data.setCenterText2FontSize(ChartUtils.px2sp(context.getResources().getDisplayMetrics().scaledDensity,
                 (int) LABEL_SIZE+20));
+        data.setSlicesSpacing(0);
         chart.setValueTouchEnabled(false);
         chart.setChartRotationEnabled(false);
         chart.setChartRotation(90, true);
