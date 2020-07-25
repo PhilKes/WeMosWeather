@@ -45,7 +45,7 @@
 
         <com.google.android.material.card.MaterialCardView
                 android:id="@+id/card3"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="1">
 
@@ -57,12 +57,14 @@
                 <lecho.lib.hellocharts.view.LineChartView
                         android:id="@+id/lineChart1"
                         android:layout_width="match_parent"
-                        android:layout_height="150dp" />
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.25" />
 
                 <lecho.lib.hellocharts.view.ColumnChartView
                         android:id="@+id/colChart1"
                         android:layout_width="match_parent"
-                        android:layout_height="150dp" />
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.25" />
             </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
