@@ -1,32 +1,50 @@
 package com.philkes.wemosweather;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
+
+import android.os.Handler;
+import android.util.Log;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.philkes.wemosweather.components.DataSlider;
+
+import lecho.lib.hellocharts.model.PieChartData;
+import lecho.lib.hellocharts.util.ChartUtils;
+import lecho.lib.hellocharts.view.PieChartView;
 
 public class MainActivity extends AppCompatActivity {
 
-    private WebView webView;
+    public static final String TAG="WeMosWeather";
+
+    private DataSlider tempSlider;
+    private DataSlider humSlider;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        final RequestQueue queue=Volley.newRequestQueue(this);
 
-        webView = findViewById(R.id.webView);
-        webView.setWebViewClient(new WebViewClient());
-        webView.loadUrl("http://192.168.178.62/");
-        WebSettings webSettings = webView.getSettings();
-        webSettings.setJavaScriptEnabled(true);
+        tempSlider=new DataSlider(this, (PieChartView) findViewById(R.id.tempPie), 50f, ChartUtils.COLOR_RED)
+                .setLabel("Temperature").setUnits("C°")
+                .setRequestQueue(queue)
+                .setUpdateWithHTTP("temperature", 3000);
+
+        humSlider=new DataSlider(this, (PieChartView) findViewById(R.id.humPie), 100f, ChartUtils.COLOR_BLUE)
+                .setLabel("Humidity").setUnits("%")
+                .setRequestQueue(queue)
+                .setUpdateWithHTTP("humidity", 3000);
+
+
     }
 
-    @Override
-    public void onBackPressed() {
-        if (webView.canGoBack())
-            webView.goBack();
-        else
-            super.onBackPressed();
-    }
+
 }

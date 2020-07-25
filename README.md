@@ -6,7 +6,13 @@
 
 #### Web Page
 * Basic HTML Page to View Station Data
-* Bootstrap 
+* Bootstrap
+
+#### Android App
+* //Only Trial[AnyChart](https://github.com/AnyChart/AnyChart-Android)
+* [MPAndroidChart](https://github.com/PhilJay/MPAndroidChart)
+* [HelloCharts](https://github.com/lecho/hellocharts-android)
+* [Material Design](https://material.io/components)
 
 #### Sketch
 ##### Libraries
