@@ -14,7 +14,10 @@ import org.joda.time.format.ISODateTimeFormat;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 /**
  * Data grouped by Days
@@ -42,9 +45,16 @@ public class DataSet {
         data.put(date, dayData);
         return dayData;
     }
+    public DayData getDayNumberData(int dayNumber){
+        return data.entrySet().stream().collect(Collectors.toList()).get(dayNumber).getValue();
+    }
 
     public HashMap<LocalDate, DayData> getData() {
         return data;
+    }
+
+    public Set<LocalDate> getDates(){
+        return data.keySet();
     }
 
     /**
@@ -72,6 +82,21 @@ public class DataSet {
 
         public DataEntry getNewestData() {
             return data.last();
+        }
+
+        public float getAverageTemp() {
+            return (float)data.stream().mapToDouble(entry-> (double)entry.getTemperature()).average().orElse(0.0);
+        }
+
+        public float getMaxTemp() {
+            return (float)data.stream().mapToDouble(entry-> (double)entry.getTemperature()).max().orElse(0.0);
+        }
+        public float getMinTemp() {
+            return (float)data.stream().mapToDouble(entry-> (double)entry.getTemperature()).min().orElse(0.0);
+        }
+
+        public String getLabel() {
+            return date.toString("dd.MM");
         }
     }
 

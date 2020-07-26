@@ -107,6 +107,10 @@ public class DataEntry implements Comparable<DataEntry> {
         return String.format("{ Temp:%f\tHum:%f\tPress:%f}",temperature,humidity,pressure);
     }
 
+    public String getLabel() {
+        return time.toString("HH:mm");
+    }
+
     public static class DataEntryAdapter implements JsonDeserializer<DataEntry> {
 
         private static final DateTimeFormatter parser    = ISODateTimeFormat.dateTimeParser();
