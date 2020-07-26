@@ -10,6 +10,7 @@
 */
 
 // Import required libraries
+
 #include <ESP8266WiFi.h>
 #include <ESPAsyncTCP.h>
 #include <ESPAsyncWebServer.h>
@@ -19,20 +20,32 @@
 #include <NTPClient.h>
 #include <WiFiUdp.h>
 
-BME280 bme280;
 
-WiFiUDP ntpUDP;
+//Connect D0 to RST for ESP.deepSleep awake!
 
-unsigned int periodTimeInMs = 300000;
+// THINGSPEAK_ONLY = 1: Dont use AsyncWebServer + NTP
+// THINGSPEAK_ONLY = 0: Use AsnycWebser + NTP + Thingspeak postData
+#define THINGSPEAK_ONLY 1
 
-NTPClient timeClient(ntpUDP, "0.de.pool.ntp.org", 7200, periodTimeInMs);
-
-// Replace with your network credentials
 char ssid[] = "WLAN Ke";
 char pass[] = "3616949541664967";
 
-// Create AsyncWebServer object on port 80
+const char* api_server = "api.thingspeak.com";
+const char* api_key = "OO615HXB4VWR8TKR";
+
+BME280 bme280;
+
+WiFiClient client;
+
+//unsigned int periodTimeInMs = 16000;
+unsigned int periodTimeInMs = 300000;
+unsigned int blinkDelay=200;
+
+#if THINGSPEAK_ONLY != 1
+NTPClient timeClient(ntpUDP, "0.de.pool.ntp.org", 7200, periodTimeInMs);
+WiFiUDP ntpUDP;
 AsyncWebServer server(80);
+#endif
 
 int idx = 0;
 const int sizeData = 288;
@@ -84,7 +97,7 @@ String getDataListString(float data[]) {
   s.remove(s.length() - 1);
   return s;
 }
-
+#if THINGSPEAK_ONLY == 0
 // Replaces placeholder with LED state value
 String processor(const String& var) {
   Serial.println(var);
@@ -161,11 +174,11 @@ String getJSONDataWithTime(float data[])
     s+= "\"time\":["+getDataTimesString()+"]}";
     return s;
 }
-
+#endif
 void setup() {
   // Serial port for debugging purposes
   Serial.begin(115200);
-
+  pinMode(BUILTIN_LED, OUTPUT);
   // Initialize the sensor
   if (!bme280.init()) {
     Serial.println("Could not find a valid BME280 sensor, check wiring!");
@@ -188,6 +201,7 @@ void setup() {
   // Print ESP32 Local IP Address
   Serial.println(WiFi.localIP());
 
+#if THINGSPEAK_ONLY == 0
   // Route for root / web page
   server.on("/", HTTP_GET, [](AsyncWebServerRequest * request) {
     request->send(SPIFFS, "/index.html", String(), false, processor);
@@ -221,6 +235,10 @@ void setup() {
   timeClient.begin();
   // Start server
   server.begin();
+#endif
+
+
+
   initializeData();
 }
 
@@ -242,19 +260,61 @@ void readNewData(){
   {
     initializeData();
   }
-
+#if THINGSPEAK_ONLY == 0
   timeClient.update();
   dataTimes[idx] = timeClient.getFormattedTime();
-
+#endif
   temp[idx] = bme280.getTemperature();
   pressure[idx] = bme280.getPressure() / 100.0 ; // pressure in hPa
   altitude[idx] = bme280.calcAltitude(pressure[idx]);
   humidity[idx] = bme280.getHumidity();
 
-  Serial.println(dataTimes[idx] + "  " + "Temp: " + String(temp[idx]) + "C° Humidity: " + String(humidity[idx]) + " Pressure: " + String(pressure[idx]) + "hPa" + " Altitude: " + String(altitude[idx]));
+  Serial.println("Temp: " + String(temp[idx]) + "C° Humidity: " + String(humidity[idx]) + " Pressure: " + String(pressure[idx]) + "hPa" + " Altitude: " + String(altitude[idx]));
+}
+
+void postData(float temperature, float humidity, float pressure){
+  digitalWrite(BUILTIN_LED, LOW);
+  delay(blinkDelay);
+  digitalWrite(BUILTIN_LED, HIGH);
+  // Send data to ThingSpeak
+  if (client.connect(api_server,80)) {
+  Serial.println("Connect to ThingSpeak - OK"); 
+
+  String dataToThingSpeak = "";
+  dataToThingSpeak+="GET /update.json?api_key=";
+  dataToThingSpeak+=api_key;
+   
+  dataToThingSpeak+="&field1=";
+  dataToThingSpeak+=String(temperature);
+
+  dataToThingSpeak+="&field2=";
+  dataToThingSpeak+=String(pressure);
+
+  dataToThingSpeak+="&field3=";
+  dataToThingSpeak+=String(humidity);
+   
+  dataToThingSpeak+=" HTTP/1.1\r\nHost: a.c.d\r\nConnection: close\r\n\r\n";
+  dataToThingSpeak+="";
+  client.print(dataToThingSpeak);
+
+  int timeout = millis() + 5000;
+  while (client.available() == 0) {
+    if (timeout - millis() < 0) {
+      Serial.println("Error: Client Timeout!");
+      client.stop();
+      return;
+    }
+  }
+}
+ while(client.available()){
+    String line = client.readStringUntil('\r');
+    Serial.print(line);
+  }
 }
 
 void loop() {
      readNewData();
-     delay(periodTimeInMs);
+     postData(temp[idx], humidity[idx], pressure[idx]);
+     delay(periodTimeInMs-blinkDelay);
+     
 }
