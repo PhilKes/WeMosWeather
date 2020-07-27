@@ -8,56 +8,45 @@
         android:layout_height="match_parent"
         tools:context=".MainActivity">
 
-    <LinearLayout
+    <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-        <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:orientation="horizontal">
-
-            <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/card1"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight=".50">
-
-                <lecho.lib.hellocharts.view.PieChartView
-                        android:id="@+id/tempPie"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
-
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/card2"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight=".50">
-
-                <lecho.lib.hellocharts.view.PieChartView
-                        android:id="@+id/humPie"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
-            </com.google.android.material.card.MaterialCardView>
-        </LinearLayout>
+            android:layout_height="match_parent">
 
         <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal">
+                android:orientation="vertical">
 
-            <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/card3"
-                    android:layout_width="0dp"
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:orientation="horizontal">
+
+
+                <lecho.lib.hellocharts.view.PieChartView
+                        android:id="@+id/tempPie"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight=".50" />
+
+
+                <lecho.lib.hellocharts.view.PieChartView
+                        android:id="@+id/humPie"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight=".50" />
+            </LinearLayout>
+
+            <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="1">
+                    android:orientation="horizontal">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
-                        android:layout_width="match_parent"
+
+                        android:layout_width="0dp"
                         android:layout_height="match_parent"
+                        android:layout_weight="1"
                         android:orientation="vertical">
 
                     <lecho.lib.hellocharts.view.LineChartView
@@ -87,27 +76,23 @@
                             app:layout_constraintTop_toBottomOf="@id/lineChart1" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-            </com.google.android.material.card.MaterialCardView>
-
+            </LinearLayout>
         </LinearLayout>
 
+        <FrameLayout
+                android:id="@+id/layoutProgressBar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:alpha="1"
+                android:background="@android:color/background_dark"
+                android:visibility="gone">
 
-    </LinearLayout>
+            <ProgressBar
+                    android:layout_width="130dp"
+                    android:layout_height="130dp"
+                    android:layout_gravity="center"
+                    android:visibility="visible" />
+        </FrameLayout>
 
-    <FrameLayout
-            android:id="@+id/layoutProgressBar"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:alpha="1"
-            android:background="@android:color/background_dark"
-            android:visibility="gone">
-
-        <ProgressBar
-                android:layout_width="130dp"
-                android:layout_height="130dp"
-                android:layout_gravity="center"
-                android:visibility="visible" />
-    </FrameLayout>
-
-
+    </com.google.android.material.card.MaterialCardView>
 </FrameLayout>

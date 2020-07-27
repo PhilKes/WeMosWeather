@@ -9,7 +9,8 @@
 * Bootstrap
 
 #### Android App
-<img src="/assets/mockup_dashboard.png" width="180">
+<img src="/assets/dashboard.png" width="180">
+
 * Fetch Data from Thingspeak Server
 * Display Data on UI Dashboard
 * History to show old Data

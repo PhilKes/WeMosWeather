@@ -10,8 +10,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.philkes.wemosweather.components.DataSlider;
@@ -19,17 +17,10 @@ import com.philkes.wemosweather.thingspeak.DataEntry;
 import com.philkes.wemosweather.thingspeak.DataSet;
 import com.philkes.wemosweather.thingspeak.Util;
 
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import lecho.lib.hellocharts.gesture.ZoomType;
 import lecho.lib.hellocharts.listener.ColumnChartOnValueSelectListener;
-import lecho.lib.hellocharts.model.Axis;
-import lecho.lib.hellocharts.model.AxisValue;
+import lecho.lib.hellocharts.listener.LineChartOnValueSelectListener;
 import lecho.lib.hellocharts.model.ColumnChartData;
-import lecho.lib.hellocharts.model.Line;
 import lecho.lib.hellocharts.model.LineChartData;
 import lecho.lib.hellocharts.model.PointValue;
 import lecho.lib.hellocharts.model.SelectedValue;
@@ -116,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
                         response -> {
                             Log.d(TAG, "initial Thingspeak Data: " + response);
                             dataSet=Util.gson.fromJson(response.toString(), DataSet.class);
-                            generateColumnData();
+                            generateDaysValues();
                             setupThingspeakUpdates(UPDATE_DELAY);
                             updateDataUI();
                             hideProgressBar();
@@ -136,9 +127,7 @@ public class MainActivity extends AppCompatActivity {
         int secIdx=chartBottom.getSelectedValue().getSecondIndex();
         SubcolumnValue subcolumnValue=chartBottom.getChartData().getColumns().get(firstIdx)
                 .getValues().get(secIdx);
-        generateLineData(firstIdx,subcolumnValue);
-
-                ;
+        generateTimeValues(firstIdx,subcolumnValue);
         Log.d(TAG, "updateDataUI: " + currentData);
     }
 
@@ -165,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void generateColumnData() {
+    private void generateDaysValues() {
         ColumnChartData columnData=Util.generateColumnData(dataSet);
 
         chartBottom.setColumnChartData(columnData);
@@ -175,20 +164,20 @@ public class MainActivity extends AppCompatActivity {
 
         // Set selection mode to keep selected month column highlighted.
         chartBottom.setValueSelectionEnabled(true);
-        Viewport v=new Viewport(-1, 50, 7, 0);
+        Viewport v=new Viewport(-1, Util.TEMP_MAX+4, 7, 0);
         chartBottom.setMaximumViewport(v);
         chartBottom.setCurrentViewport(v);
-
         chartBottom.setZoomEnabled(false);
         chartBottom.selectValue(new SelectedValue(0, 0, SelectedValue.SelectedValueType.COLUMN));
     }
 
-    private void generateLineData(int dayIndex, SubcolumnValue dayColumn) {
+    private void generateTimeValues(int dayIndex, SubcolumnValue dayColumn) {
         // Cancel last animation if not finished.
         chartTop.cancelDataAnimation();
 
         DataSet.DayData dayData=dataSet.getDayNumberData(dayIndex);
         LineChartData lineChartData=Util.generateLineData(dayData,dayColumn.getColor());
+
         chartTop.setLineChartData(lineChartData);
 
         // For build-up animation you have to disable viewport recalculation.
@@ -201,14 +190,8 @@ public class MainActivity extends AppCompatActivity {
         chartTop.setCurrentViewport(v);
 
         chartTop.setZoomType(ZoomType.HORIZONTAL);
+        chartTop.setValueSelectionEnabled(true);
 
-       /*
-        for(PointValue value : line.getValues()) {
-            // Change target only for Y value.
-            value.setTarget(value.getX(), (float) Math.random() * range);
-        }*/
-
-        // Start new data animation with 300ms duration;
         chartTop.startDataAnimation(300);
     }
 
@@ -216,14 +199,12 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onValueSelected(int columnIndex, int subcolumnIndex, SubcolumnValue value) {
-            generateLineData(columnIndex, value);
+            generateTimeValues(columnIndex, value);
         }
 
         @Override
         public void onValueDeselected() {
-
             //generateLineData();
-
         }
     }
 }

@@ -16,6 +16,7 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
  * Data grouped by Days
  */
 public class DataSet {
-    private HashMap<LocalDate, DayData> data=new HashMap<>();
+    private TreeMap<LocalDate, DayData> data=new TreeMap<>();
 
     public DayData addEntry(DataEntry dataEntry) {
         LocalDate dataLocalDate=dataEntry.getTime().toLocalDate();
@@ -49,7 +50,7 @@ public class DataSet {
         return data.entrySet().stream().collect(Collectors.toList()).get(dayNumber).getValue();
     }
 
-    public HashMap<LocalDate, DayData> getData() {
+    public TreeMap<LocalDate, DayData> getData() {
         return data;
     }
 

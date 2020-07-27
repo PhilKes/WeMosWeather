@@ -6,7 +6,11 @@
 
 
 //Connect D0 to RST for ESP.deepSleep awake!
-
+//BME 280 <-> Wemos
+// SDA - D2
+// SCL - D1
+// VIN - 3.3V
+// GND - G
 char ssid[] = "WLAN Ke";
 char pass[] = "3616949541664967";
 

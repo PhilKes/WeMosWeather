@@ -2,8 +2,11 @@ package com.philkes.wemosweather.components;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.ColorSpace;
 import android.os.Handler;
 import android.util.Log;
+
+import androidx.core.graphics.ColorUtils;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -37,6 +40,8 @@ public class DataSlider {
 
     private String TAG="WeMosWeather";
 
+    private float dividerSize;
+
     public DataSlider(Context context,
                       PieChartView chart,
                       String label,
@@ -47,6 +52,7 @@ public class DataSlider {
         this.maxValue=maxValue;
         this.context=context;
         this.color=color;
+        this.dividerSize=this.maxValue/150;
         setUnits(units);
         initialize();
         setLabel(label);
@@ -57,10 +63,15 @@ public class DataSlider {
 
         float tmp=0.0f;
 
-        SliceValue sliceValue=new SliceValue(tmp, color);
+        SliceValue sliceValue=new SliceValue(dividerSize, Color.parseColor("#000000"));
+        sliceValue.setLabel("");
+        values.add(sliceValue);
+
+        sliceValue=new SliceValue(tmp, color);
         sliceValue.setLabel(tmp + units);
         values.add(sliceValue);
-        sliceValue=new SliceValue(maxValue - tmp, Color.parseColor("#FFFFFF"));
+
+        sliceValue=new SliceValue(maxValue - tmp-dividerSize, Color.parseColor("#FFFFFF"));
         sliceValue.setLabel("");
         values.add(sliceValue);
 
@@ -98,8 +109,8 @@ public class DataSlider {
     }
 
     public SliceValue getPieDataValue() {
-        if(chart.getPieChartData()!=null && chart.getPieChartData().getValues().size()>0) {
-            return chart.getPieChartData().getValues().get(0);
+        if(chart.getPieChartData()!=null && chart.getPieChartData().getValues().size()>1) {
+            return chart.getPieChartData().getValues().get(1);
         }
         return null;
     }
@@ -112,9 +123,9 @@ public class DataSlider {
         //val.setValue(value);
         val.setTarget(value);
         val.setLabel(value + "");
-        SliceValue fillValue=chart.getPieChartData().getValues().get(1);
+        SliceValue fillValue=chart.getPieChartData().getValues().get(2);
         //fillValue.setValue(maxValue - value);
-        fillValue.setTarget(maxValue - value);
+        fillValue.setTarget(maxValue - value-dividerSize);
         chart.getPieChartData().setCenterText2(value+" "+units);
         chart.getPieChartData().finish();
         chart.setPieChartData(chart.getPieChartData());
