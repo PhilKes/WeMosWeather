@@ -1,10 +1,14 @@
 package com.philkes.wemosweather.thingspeak;
 
+import android.provider.ContactsContract;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,9 +46,10 @@ public class Util {
 
 
     public static final float TEMP_MAX=50;
+    public static final float TEMP_MIN=-10f;
     public static final float HUM_MAX=100;
 
-    public static final float TEMP_HUM_SCALE=TEMP_MAX / HUM_MAX;
+    public static final float TEMP_HUM_SCALE=(TEMP_MAX - TEMP_MIN) / HUM_MAX;
 
     public static final float sub=(0 * TEMP_HUM_SCALE) / 2.0f;
 
@@ -67,7 +72,9 @@ public class Util {
         for(Map.Entry<LocalDate, DataSet.DayData> dayData : dataSet.getData().entrySet()) {
             values=new ArrayList<>();
             float dayTempValue=dayData.getValue().getMaxTemp();
-            values.add(new SubcolumnValue(dayTempValue, Util.chartColorForTemperature(dayTempValue)));
+            values.add(new SubcolumnValue(dayTempValue, Util.chartColorForTemperature(dayTempValue))
+                    .setLabel("" + dayTempValue + "C°")
+            );
 
             axisValues.add(new AxisValue(axisCounter).setLabel(dayData.getValue().getLabel()));
             columns.add(new Column(values).setHasLabelsOnlyForSelected(true));
@@ -77,12 +84,12 @@ public class Util {
         colData.setAxisXBottom(new Axis(axisValues)
                 .setMaxLabelChars(5)
                 .setName("Last 7 Days")
-                .setTextSize(CHART_TEXT_SIZE-2)
+                .setTextSize(CHART_TEXT_SIZE - 2)
         );
         colData.setAxisYLeft(new Axis().setHasLines(true)
                 .setMaxLabelChars(3)
                 .setName("Max  C °")
-                .setTextSize(CHART_TEXT_SIZE-2)
+                .setTextSize(CHART_TEXT_SIZE - 2)
         );
         return colData;
     }
@@ -96,7 +103,7 @@ public class Util {
         for(DataEntry dataEntry : dayData.getData()) {
             temperatureVals.add(new PointValue(dataCounter, 0f)
                     .setTarget(dataCounter, dataEntry.getTemperature())
-                    .setLabel(""+dataEntry.getTemperature())
+                    .setLabel("" + dataEntry.getTemperature())
             );
             humidityVals.add(new PointValue(dataCounter, 0f)
                     .setTarget(dataCounter, dataEntry.getHumidity() * TEMP_HUM_SCALE));
@@ -105,7 +112,7 @@ public class Util {
         }
 
         Line temperatureLine=new Line(temperatureVals);
-        temperatureLine.setColor(ChartUtils.COLOR_RED)
+        temperatureLine.setColor(ChartUtils.darkenColor(ChartUtils.COLOR_RED))
                 .setCubic(true)
                 .setHasLabelsOnlyForSelected(true);
 
@@ -145,6 +152,46 @@ public class Util {
         return lineData;
     }
 
+    public static DecimalFormat decimalFormat=new DecimalFormat("#.00");
+
+    private static int MINUTES_PER_DAY=24 * 60;
+
+    public static DataSet generateTestDataSet(int days, int entriesPerDay, float minTemp, float maxTemp) {
+        float tempRange=(maxTemp - minTemp);
+        DataSet dataSet=new DataSet();
+        LocalDate date=LocalDate.now().minusDays(days-1);
+        int entryInterval=(int)Math.round(Math.ceil(MINUTES_PER_DAY  / entriesPerDay));
+
+        int nightFactor=Math.round(tempRange / 3);
+        int nightBorder=entriesPerDay - (entriesPerDay / 5);
+
+        for(int day=0; day<days; day++) {
+            DataSet.DayData dayData=dataSet.getOrAddDayData(date);
+            DateTime entryTime=new DateTime(date.toDate());
+            float dayMaxTemp=maxTemp - (maxTemp * (float) Math.random()*0.5f);
+            float dayTempRange=(dayMaxTemp - minTemp);
+
+            for(int entry=0; entry<entriesPerDay; entry++) {
+                float temp;
+                if(entry<nightBorder) {
+                    temp=Float.parseFloat(decimalFormat.format((minTemp + nightFactor) + (float) Math.random() * (dayTempRange - nightFactor)));
+                }
+                else {
+                    temp=Float.parseFloat(decimalFormat.format((minTemp) + (float) Math.random() * (dayTempRange - nightFactor)));
+                }
+                float hum=Math.abs(Float.parseFloat(decimalFormat.format((temp / dayTempRange) * 100)));
+                dayData.addData(new DataEntry()
+                        .setId(day * entriesPerDay + entry)
+                        .setTemperature(temp)
+                        .setHumidity(hum)
+                        .setTime(entryTime));
+                entryTime=entryTime.plusMinutes(entryInterval);
+            }
+            date=date.plusDays(1);
+        }
+        return dataSet;
+    }
+
     /**
      * Recalculated height values to display on axis. For this example I use auto-generated height axis so I
      * override only formatAutoValue method.
@@ -155,15 +202,20 @@ public class Util {
         private float sub;
         private int decimalDigits;
 
+        private float bias=0f;
+
         public HumidityValueFormatter(float scale, float sub, int decimalDigits) {
             this.scale=scale;
             this.sub=sub;
             this.decimalDigits=decimalDigits;
+            if(TEMP_MIN<0) {
+                bias=Math.abs(TEMP_MIN);
+            }
         }
 
         @Override
         public int formatValueForAutoGeneratedAxis(char[] formattedValue, float value, int autoDecimalDigits) {
-            float scaledValue=(value + sub) / scale;
+            float scaledValue=(value + sub + bias) / scale;
             int x=super.formatValueForAutoGeneratedAxis(formattedValue, scaledValue, this.decimalDigits);
             return x;
         }
@@ -174,16 +226,16 @@ public class Util {
             return ChartUtils.darkenColor(ChartUtils.COLOR_BLUE);
         }
         else if(temperature<17) {
-            return ChartUtils.darkenColor(ChartUtils.COLOR_ORANGE);
+            return ChartUtils.COLOR_GREEN;
         }
-        else if(temperature<24) {
+        else if(temperature<21) {
+            return ChartUtils.COLOR_GREEN;
+        }
+        else if(temperature<30) {
             return ChartUtils.COLOR_ORANGE;
         }
-        else if(temperature<32) {
-            return ChartUtils.COLOR_RED;
-        }
         else {
-            return ChartUtils.darkenColor(ChartUtils.darkenColor(ChartUtils.COLOR_RED));
+            return ChartUtils.darkenColor(ChartUtils.COLOR_RED);
         }
 
     }

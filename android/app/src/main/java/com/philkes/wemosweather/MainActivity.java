@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -19,10 +20,8 @@ import com.philkes.wemosweather.thingspeak.Util;
 
 import lecho.lib.hellocharts.gesture.ZoomType;
 import lecho.lib.hellocharts.listener.ColumnChartOnValueSelectListener;
-import lecho.lib.hellocharts.listener.LineChartOnValueSelectListener;
 import lecho.lib.hellocharts.model.ColumnChartData;
 import lecho.lib.hellocharts.model.LineChartData;
-import lecho.lib.hellocharts.model.PointValue;
 import lecho.lib.hellocharts.model.SelectedValue;
 import lecho.lib.hellocharts.model.SubcolumnValue;
 import lecho.lib.hellocharts.model.Viewport;
@@ -37,7 +36,7 @@ import static com.philkes.wemosweather.thingspeak.Util.getLastChannelEntryURL;
 public class MainActivity extends AppCompatActivity {
 
     public static final String TAG="WeMosWeather";
-    public static final int UPDATE_DELAY=60000;
+    public static final int UPDATE_DELAY=20000;
 
     private DataSlider tempSlider;
     private DataSlider humSlider;
@@ -106,9 +105,9 @@ public class MainActivity extends AppCompatActivity {
                          * Setup Thingspeak updates*/
                         response -> {
                             Log.d(TAG, "initial Thingspeak Data: " + response);
-                            dataSet=Util.gson.fromJson(response.toString(), DataSet.class);
-                            generateDaysValues();
-                            setupThingspeakUpdates(UPDATE_DELAY);
+                            //dataSet=Util.gson.fromJson(response.toString(), DataSet.class);
+                            dataSet=Util.generateTestDataSet(100,100,-10,35);
+                            //setupThingspeakUpdates(UPDATE_DELAY);
                             updateDataUI();
                             hideProgressBar();
                         },
@@ -120,14 +119,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateDataUI() {
-        DataEntry currentData=dataSet.getCurrentData();
+        DataEntry currentData=dataSet.getLatestData();
         tempSlider.updateValue(currentData.getTemperature());
         humSlider.updateValue(currentData.getHumidity());
+        generateDaysValues();
         int firstIdx=chartBottom.getSelectedValue().getFirstIndex();
         int secIdx=chartBottom.getSelectedValue().getSecondIndex();
         SubcolumnValue subcolumnValue=chartBottom.getChartData().getColumns().get(firstIdx)
                 .getValues().get(secIdx);
-        generateTimeValues(firstIdx,subcolumnValue);
+        generateTimeValues(firstIdx, subcolumnValue);
         Log.d(TAG, "updateDataUI: " + currentData);
     }
 
@@ -144,8 +144,9 @@ public class MainActivity extends AppCompatActivity {
                         (Request.Method.GET, url, null, response -> {
                             Log.d(TAG, "update: " + response);
                             DataEntry entry=Util.gson.fromJson(response.toString(), DataEntry.class);
-                            dataSet.addEntry(entry);
-                            updateDataUI();
+                            if(dataSet.addEntry(entry)) {
+                                updateDataUI();
+                            }
                         }, error -> Log.d(TAG, "update: " + error.toString()));
                 queue.add(stringRequest);
                 h.postDelayed(this, interval);
@@ -164,11 +165,15 @@ public class MainActivity extends AppCompatActivity {
 
         // Set selection mode to keep selected month column highlighted.
         chartBottom.setValueSelectionEnabled(true);
-        Viewport v=new Viewport(-1, Util.TEMP_MAX+4, 7, 0);
-        chartBottom.setMaximumViewport(v);
+
+        int valueSize=columnData.getColumns().size();
+        //Viewport v2=new Viewport(-1, Util.TEMP_MAX + 4, 7, 0);
+        Viewport v=new Viewport(valueSize - 7, 50, valueSize, Util.TEMP_MIN);
+        Viewport vMax=new Viewport(-1, 50, valueSize, Util.TEMP_MIN);
+        chartBottom.setMaximumViewport(vMax);
         chartBottom.setCurrentViewport(v);
         chartBottom.setZoomEnabled(false);
-        chartBottom.selectValue(new SelectedValue(0, 0, SelectedValue.SelectedValueType.COLUMN));
+        chartBottom.selectValue(new SelectedValue(columnData.getColumns().size()-1, 0, SelectedValue.SelectedValueType.COLUMN));
     }
 
     private void generateTimeValues(int dayIndex, SubcolumnValue dayColumn) {
@@ -176,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
         chartTop.cancelDataAnimation();
 
         DataSet.DayData dayData=dataSet.getDayNumberData(dayIndex);
-        LineChartData lineChartData=Util.generateLineData(dayData,dayColumn.getColor());
+        LineChartData lineChartData=Util.generateLineData(dayData, dayColumn.getColor());
 
         chartTop.setLineChartData(lineChartData);
 
@@ -184,12 +189,13 @@ public class MainActivity extends AppCompatActivity {
         chartTop.setViewportCalculationEnabled(false);
         int valueSize=lineChartData.getLines().get(0).getValues().size();
         // And set initial max viewport and current viewport- remember to set viewports after data.
-        Viewport v=new Viewport(valueSize - 10, 50, valueSize, 0);
-        Viewport vMax=new Viewport(0, 50, valueSize, 0);
+        Viewport v=new Viewport(valueSize - 10, 50, valueSize, Util.TEMP_MIN);
+        Viewport vMax=new Viewport(0, 50, valueSize, Util.TEMP_MIN);
         chartTop.setMaximumViewport(vMax);
         chartTop.setCurrentViewport(v);
 
         chartTop.setZoomType(ZoomType.HORIZONTAL);
+        chartTop.setZoomEnabled(false);
         chartTop.setValueSelectionEnabled(true);
 
         chartTop.startDataAnimation(300);

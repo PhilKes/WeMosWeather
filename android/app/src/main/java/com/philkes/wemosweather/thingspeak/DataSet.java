@@ -15,6 +15,7 @@ import org.joda.time.format.ISODateTimeFormat;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -26,17 +27,18 @@ import java.util.stream.Collectors;
 public class DataSet {
     private TreeMap<LocalDate, DayData> data=new TreeMap<>();
 
-    public DayData addEntry(DataEntry dataEntry) {
+    public boolean addEntry(DataEntry dataEntry) {
         LocalDate dataLocalDate=dataEntry.getTime().toLocalDate();
         DayData dayData=getOrAddDayData(dataLocalDate);
-        dayData.addData(dataEntry);
-        return dayData;
+        return dayData.addData(dataEntry);
     }
 
-    public DataEntry getCurrentData() {
-        DayData todayData=data.get(DateTime.now().toLocalDate());
-        return todayData==null ? null : todayData.getNewestData();
+    public DataEntry getLatestData() {
+        Map.Entry<LocalDate,DayData> latestDayData=
+                data.lastEntry();
+        return latestDayData==null ? null : latestDayData.getValue().getNewestData();
     }
+
 
     public DayData getOrAddDayData(LocalDate date) {
         if(data.containsKey(date)) {
@@ -46,7 +48,8 @@ public class DataSet {
         data.put(date, dayData);
         return dayData;
     }
-    public DayData getDayNumberData(int dayNumber){
+
+    public DayData getDayNumberData(int dayNumber) {
         return data.entrySet().stream().collect(Collectors.toList()).get(dayNumber).getValue();
     }
 
@@ -54,7 +57,7 @@ public class DataSet {
         return data;
     }
 
-    public Set<LocalDate> getDates(){
+    public Set<LocalDate> getDates() {
         return data.keySet();
     }
 
@@ -69,8 +72,9 @@ public class DataSet {
             this.date=date;
         }
 
-        public void addData(DataEntry dataEntry) {
-            data.add(dataEntry);
+        //Returns true if data is new
+        public boolean addData(DataEntry dataEntry) {
+            return data.add(dataEntry);
         }
 
         public LocalDate getDate() {
@@ -86,14 +90,15 @@ public class DataSet {
         }
 
         public float getAverageTemp() {
-            return (float)data.stream().mapToDouble(entry-> (double)entry.getTemperature()).average().orElse(0.0);
+            return (float) data.stream().mapToDouble(entry -> (double) entry.getTemperature()).average().orElse(0.0);
         }
 
         public float getMaxTemp() {
-            return (float)data.stream().mapToDouble(entry-> (double)entry.getTemperature()).max().orElse(0.0);
+            return (float) data.stream().mapToDouble(entry -> (double) entry.getTemperature()).max().orElse(0.0);
         }
+
         public float getMinTemp() {
-            return (float)data.stream().mapToDouble(entry-> (double)entry.getTemperature()).min().orElse(0.0);
+            return (float) data.stream().mapToDouble(entry -> (double) entry.getTemperature()).min().orElse(0.0);
         }
 
         public String getLabel() {
