@@ -104,6 +104,10 @@ public class DataSet {
         public String getLabel() {
             return date.toString("dd.MM");
         }
+
+        public DataEntry getEntryNumberData(int entryNumber) {
+           return data.stream().collect(Collectors.toList()).get(entryNumber);
+        }
     }
 
     public static class DataSetAdapter implements JsonDeserializer<DataSet> {

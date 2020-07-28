@@ -20,8 +20,10 @@ import com.philkes.wemosweather.thingspeak.Util;
 
 import lecho.lib.hellocharts.gesture.ZoomType;
 import lecho.lib.hellocharts.listener.ColumnChartOnValueSelectListener;
+import lecho.lib.hellocharts.listener.LineChartOnValueSelectListener;
 import lecho.lib.hellocharts.model.ColumnChartData;
 import lecho.lib.hellocharts.model.LineChartData;
+import lecho.lib.hellocharts.model.PointValue;
 import lecho.lib.hellocharts.model.SelectedValue;
 import lecho.lib.hellocharts.model.SubcolumnValue;
 import lecho.lib.hellocharts.model.Viewport;
@@ -34,6 +36,7 @@ import static com.philkes.wemosweather.thingspeak.Util.getChannelFeedsURL;
 import static com.philkes.wemosweather.thingspeak.Util.getLastChannelEntryURL;
 
 public class MainActivity extends AppCompatActivity {
+    public static final boolean DEBUG_LAYOUT= false;
 
     public static final String TAG="WeMosWeather";
     public static final int UPDATE_DELAY=20000;
@@ -46,12 +49,18 @@ public class MainActivity extends AppCompatActivity {
 
     private DataSet dataSet;
 
+    private DataSet.DayData selectedDayData=null;
+    private DataEntry selectedEntry=null;
+
     // 0: Thingspeak Channel
     // 1: HTTP WebServer
     public static final int UPDATE_SOURCE=0;
     private FrameLayout layoutProgressBar;
 
     RequestQueue queue;
+
+    public TextView textTime;
+    public TextView textDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +86,9 @@ public class MainActivity extends AppCompatActivity {
         //.setRequestQueue(queue)
         //.setUpdateWithHTTP("humidity", 3000);
 
+        textTime=findViewById(R.id.textTime);
+        textDate=findViewById(R.id.textDate);
+
         chartTop=findViewById(R.id.lineChart1);
         chartBottom=findViewById(R.id.colChart1);
         layoutProgressBar=findViewById(R.id.layoutProgressBar);
@@ -98,24 +110,29 @@ public class MainActivity extends AppCompatActivity {
      * Requests and loads DataSet from Thingspeak channel data
      */
     private void requestInitialThingspeakData() {
-        String url=getChannelFeedsURL();
-        JsonObjectRequest stringRequest=new JsonObjectRequest
-                (Request.Method.GET, url, null,
-                        /** Load dataSet from Thingspeak data
-                         * Setup Thingspeak updates*/
-                        response -> {
-                            Log.d(TAG, "initial Thingspeak Data: " + response);
-                            //dataSet=Util.gson.fromJson(response.toString(), DataSet.class);
-                            dataSet=Util.generateTestDataSet(100,100,-10,35);
-                            //setupThingspeakUpdates(UPDATE_DELAY);
-                            updateDataUI();
-                            hideProgressBar();
-                        },
-                        error -> {
-                            Log.e(TAG, "initial Thingspeak Data: " + error.toString());
-                            requestInitialThingspeakData();
-                        });
-        queue.add(stringRequest);
+        if(DEBUG_LAYOUT){
+            dataSet=Util.generateTestDataSet(100,100,-10,35);
+            updateDataUI();
+            hideProgressBar();
+        }else {
+            String url=getChannelFeedsURL();
+            JsonObjectRequest stringRequest=new JsonObjectRequest
+                    (Request.Method.GET, url, null,
+                            /** Load dataSet from Thingspeak data
+                             * Setup Thingspeak updates*/
+                            response -> {
+                                Log.d(TAG, "initial Thingspeak Data: " + response);
+                                dataSet=Util.gson.fromJson(response.toString(), DataSet.class);
+                                setupThingspeakUpdates(UPDATE_DELAY);
+                                updateDataUI();
+                                hideProgressBar();
+                            },
+                            error -> {
+                                Log.e(TAG, "initial Thingspeak Data: " + error.toString());
+                                requestInitialThingspeakData();
+                            });
+            queue.add(stringRequest);
+        }
     }
 
     private void updateDataUI() {
@@ -128,6 +145,7 @@ public class MainActivity extends AppCompatActivity {
         SubcolumnValue subcolumnValue=chartBottom.getChartData().getColumns().get(firstIdx)
                 .getValues().get(secIdx);
         generateTimeValues(firstIdx, subcolumnValue);
+        chartBottom.selectValue(new SelectedValue(chartBottom.getChartData().getColumns().size()-1, 0, SelectedValue.SelectedValueType.COLUMN));
         Log.d(TAG, "updateDataUI: " + currentData);
     }
 
@@ -161,15 +179,14 @@ public class MainActivity extends AppCompatActivity {
         chartBottom.setColumnChartData(columnData);
 
         // Set value touch listener that will trigger changes for chartTop.
-        chartBottom.setOnValueTouchListener(new ValueTouchListener());
-
-        // Set selection mode to keep selected month column highlighted.
         chartBottom.setValueSelectionEnabled(true);
+        chartBottom.setOnValueTouchListener(new DayColumnValueListener());
 
         int valueSize=columnData.getColumns().size();
         //Viewport v2=new Viewport(-1, Util.TEMP_MAX + 4, 7, 0);
         Viewport v=new Viewport(valueSize - 7, 50, valueSize, Util.TEMP_MIN);
         Viewport vMax=new Viewport(-1, 50, valueSize, Util.TEMP_MIN);
+
         chartBottom.setMaximumViewport(vMax);
         chartBottom.setCurrentViewport(v);
         chartBottom.setZoomEnabled(false);
@@ -196,21 +213,47 @@ public class MainActivity extends AppCompatActivity {
 
         chartTop.setZoomType(ZoomType.HORIZONTAL);
         chartTop.setZoomEnabled(false);
+
         chartTop.setValueSelectionEnabled(true);
+        chartTop.setOnValueTouchListener(new EntryPointValueListener());
 
         chartTop.startDataAnimation(300);
     }
 
-    private class ValueTouchListener implements ColumnChartOnValueSelectListener {
+    public void displaySelectedEntry(){
+        tempSlider.updateValue(selectedEntry.getTemperature());
+        humSlider.updateValue(selectedEntry.getHumidity());
+        textTime.setText(selectedEntry.getTimeString());
+        textDate.setText(selectedDayData.getLabel());
+    }
+
+    private class DayColumnValueListener implements ColumnChartOnValueSelectListener {
 
         @Override
         public void onValueSelected(int columnIndex, int subcolumnIndex, SubcolumnValue value) {
             generateTimeValues(columnIndex, value);
+            selectedDayData= dataSet.getDayNumberData(columnIndex);
+            chartTop.selectValue(new SelectedValue(0, chartTop.getLineChartData().getLines().get(0).getValues().size()-1, SelectedValue.SelectedValueType.LINE));
         }
 
         @Override
         public void onValueDeselected() {
             //generateLineData();
+        }
+    }
+    private class EntryPointValueListener implements LineChartOnValueSelectListener {
+
+        @Override
+        public void onValueSelected(int lineIdx, int pointIdx, PointValue pointValue) {
+            System.out.println(String.format("Selected %d , %d of"+pointValue,lineIdx,pointIdx));
+            selectedEntry= selectedDayData.getEntryNumberData(pointIdx);
+            displaySelectedEntry();
+
+        }
+
+        @Override
+        public void onValueDeselected() {
+
         }
     }
 }

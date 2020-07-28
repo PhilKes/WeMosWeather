@@ -10,15 +10,17 @@ import com.google.gson.reflect.TypeToken;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
 import java.lang.reflect.Type;
+import java.util.Locale;
 import java.util.Map;
 
 /** Temperature, Humidity, Pressure Data for a Timestamp*/
 public class DataEntry implements Comparable<DataEntry> {
-    private static final DateTimeFormatter formatter = ISODateTimeFormat.dateTimeNoMillis();
+    private static final DateTimeFormatter formatter =DateTimeFormat.forPattern("HH:mm");
 
     private long id;
     private float temperature;

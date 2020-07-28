@@ -52,7 +52,7 @@ public class DataSlider {
         this.maxValue=maxValue;
         this.context=context;
         this.color=color;
-        this.dividerSize=this.maxValue/150;
+        this.dividerSize=this.maxValue/120;
         setUnits(units);
         initialize();
         setLabel(label);
@@ -96,7 +96,7 @@ public class DataSlider {
         data.setSlicesSpacing(0);
         chart.setValueTouchEnabled(false);
         chart.setChartRotationEnabled(false);
-        chart.setChartRotation(90, true);
+        chart.setChartRotation(Math.round(90-2*dividerSize), true);
         chart.setPieChartData(data);
     }
 
