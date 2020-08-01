@@ -52,7 +52,7 @@ public class DataSlider {
         this.maxValue=maxValue;
         this.context=context;
         this.color=color;
-        this.dividerSize=this.maxValue/120;
+        this.dividerSize=this.maxValue / 120;
         setUnits(units);
         initialize();
         setLabel(label);
@@ -67,11 +67,15 @@ public class DataSlider {
         sliceValue.setLabel("");
         values.add(sliceValue);
 
+        sliceValue=new SliceValue(tmp, ChartUtils.darkenColor(ChartUtils.COLOR_BLUE));
+        sliceValue.setLabel(tmp + units);
+        values.add(sliceValue);
+
         sliceValue=new SliceValue(tmp, color);
         sliceValue.setLabel(tmp + units);
         values.add(sliceValue);
 
-        sliceValue=new SliceValue(maxValue - tmp-dividerSize, Color.parseColor("#FFFFFF"));
+        sliceValue=new SliceValue(maxValue - tmp - dividerSize, Color.parseColor("#FFFFFF"));
         sliceValue.setLabel("");
         values.add(sliceValue);
 
@@ -86,17 +90,17 @@ public class DataSlider {
 
         // Get font size from dimens.xml and convert it to sp(library uses sp values).
         data.setCenterText1FontSize(ChartUtils.px2sp(context.getResources().getDisplayMetrics().scaledDensity,
-                (int) LABEL_SIZE-5));
+                (int) LABEL_SIZE - 5));
         data.setCenterText1Color(context.getResources().getColor(R.color.actionBarText));
         data.setCenterText2Color(context.getResources().getColor(R.color.actionBarText));
         //Typeface tf = Typeface.createFromAsset(getActivity().getAssets(), "Roboto-Italic.ttf");
         //data.setCenterText2Typeface(tf);
         data.setCenterText2FontSize(ChartUtils.px2sp(context.getResources().getDisplayMetrics().scaledDensity,
-                (int) LABEL_SIZE+20));
+                (int) LABEL_SIZE + 20));
         data.setSlicesSpacing(0);
         chart.setValueTouchEnabled(false);
         chart.setChartRotationEnabled(false);
-        chart.setChartRotation(Math.round(90-2*dividerSize), true);
+        chart.setChartRotation(Math.round(90 - 2 * dividerSize), true);
         chart.setPieChartData(data);
     }
 
@@ -109,24 +113,34 @@ public class DataSlider {
     }
 
     public SliceValue getPieDataValue() {
-        if(chart.getPieChartData()!=null && chart.getPieChartData().getValues().size()>1) {
-            return chart.getPieChartData().getValues().get(1);
+        if(chart.getPieChartData()!=null && chart.getPieChartData().getValues().size()>2) {
+            return chart.getPieChartData().getValues().get(2);
         }
         return null;
     }
 
     public DataSlider updateValue(float value) {
+        value=0;
         SliceValue val=getPieDataValue();
         if(val==null) {
             return this;
         }
         //val.setValue(value);
-        val.setTarget(value);
-        val.setLabel(value + "");
-        SliceValue fillValue=chart.getPieChartData().getValues().get(2);
+        SliceValue fillValue=chart.getPieChartData().getValues().get(1);
+        if(value>0) {
+            fillValue.setTarget(10);
+            val.setTarget(value);
+            val.setLabel(value + "");
+        }else {
+            fillValue.setTarget(value);
+
+            val.setTarget(0);
+            val.setLabel(0 + "");
+        }
+        fillValue=chart.getPieChartData().getValues().get(3);
         //fillValue.setValue(maxValue - value);
-        fillValue.setTarget(maxValue - value-dividerSize);
-        chart.getPieChartData().setCenterText2(value+" "+units);
+        fillValue.setTarget(maxValue - value - dividerSize);
+        chart.getPieChartData().setCenterText2(value + " " + units);
         chart.getPieChartData().finish();
         chart.setPieChartData(chart.getPieChartData());
         return this;
@@ -164,7 +178,7 @@ public class DataSlider {
     /**
      * Updates Slider value using HTTP GET in given interval
      */
-    public DataSlider setUpdateWithHTTP(final String dataUrl,final int interval) {
+    public DataSlider setUpdateWithHTTP(final String dataUrl, final int interval) {
         final Handler h=new Handler();
         h.postDelayed(new Runnable() {
 
@@ -175,7 +189,7 @@ public class DataSlider {
                         (Request.Method.GET, url, new Response.Listener<String>() {
                             @Override
                             public void onResponse(String response) {
-                                Log.d(TAG, "update: " + response+" "+units);
+                                Log.d(TAG, "update: " + response + " " + units);
                                 updateValue(Float.parseFloat(response));
                             }
                         }, new Response.ErrorListener() {

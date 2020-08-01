@@ -1,0 +1,36 @@
+Wanddicke: 
+1.2mm
+
+Loch für Lichtsensor?
+
+Löcher Abstand links:
+1mm
+
+Löcher Abstand oben:
+0.695mm
+1.5mm
+
+Batterie:
+Länge: 64mm
+Durchmesser:17.0mm
+
+Lichtsensor:
+4mm x 5mm
+
+Solar Panel:
+Breite: 56mm
+Länge: 84mm
+Höhe: 1.2mm
+
+-> Solid:
+Länge: 86.4mm
+Breite: 58.4mm
+Höhe: 2.4mm
+
+Abstand Solar Panel +/-
+Unten:
+15mm
+Links/Rechts: 37mm
+
+17mm breite
+64mm

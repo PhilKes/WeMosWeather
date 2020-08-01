@@ -1,0 +1,12 @@
+Höhe
+10.95 cm
+Länge
+9.00cm
+Breite
+5.73cm
+
+Volumen:
+77298.196 mm^3
+
+Gewicht:
+80g (Ultimaker Cura Slicer)
