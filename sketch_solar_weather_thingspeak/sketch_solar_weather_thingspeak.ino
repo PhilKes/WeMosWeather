@@ -3,7 +3,7 @@
 #include <Wire.h>
 #include "Seeed_BME280.h"
 #include <WiFiUdp.h>
-
+#include "api.h"
 
 //Connect D0 to RST for ESP.deepSleep awake!
 //BME 280 <-> Wemos
@@ -11,11 +11,8 @@
 // SCL - D1
 // VIN - 3.3V
 // GND - G
-char ssid[] = "WLAN Ke";
-char pass[] = "3616949541664967";
 
 const char* api_server = "api.thingspeak.com";
-const char* api_key = "OO615HXB4VWR8TKR";
 
 BME280 bme280;
 

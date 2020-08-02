@@ -1,2 +1,5 @@
 ﻿.idea
 *.iml
+/sketch_solar_weather_asyncweb/api.h
+/sketch_solar_weather_thingspeak/api.h
+*api.h

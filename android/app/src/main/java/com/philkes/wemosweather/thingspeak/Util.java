@@ -1,9 +1,11 @@
 package com.philkes.wemosweather.thingspeak;
 
+import android.content.res.Resources;
 import android.provider.ContactsContract;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.philkes.wemosweather.R;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -37,8 +39,14 @@ public class Util {
         gson=gsonBuilder.create();
     }
 
-    public static final String READ_KEY="OO615HXB4VWR8TKR";
-    public static final String CHANNEL_ID="1093516";
+    public static String READ_KEY;
+    public static String CHANNEL_ID;
+
+    public static void loadValues(Resources resources) {
+        CHANNEL_ID= resources.getString(R.string.THINGSPEAK_CHANNEL);
+        READ_KEY= resources.getString(R.string.THINGSPEAK_READ_KEY);
+    }
+
     public static final String THINGSPEAK_URL="https://api.thingspeak.com/";
     public static final String TIME_ZOME_PARAM="&timezone=Europe/Berlin";
 
@@ -194,6 +202,8 @@ public class Util {
         }
         return dataSet;
     }
+
+
 
     /**
      * Recalculated height values to display on axis. For this example I use auto-generated height axis so I

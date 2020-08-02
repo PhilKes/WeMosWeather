@@ -9,6 +9,9 @@
 * [WeMos D1 Mini](https://docs.wemos.cc/en/latest/d1/d1_mini.html)
 * Light Sensor
 
+## Sketch
+* Post Sensor Data to Thingspeak in interval (every 5 min)
+
 ## Web Page
 * Basic HTML Page to View Station Data
 * Bootstrap
@@ -21,12 +24,27 @@
 * Display Data on UI Dashboard
 * History to show old Data
 
+## Thingspeak
+* To allow the Android App and WeMos Sketch to post/read Data to/from Thingspeak add the following files:
+
+/sketch/solar_weather_thingspeak/api.h:
+
+const char* api_key = <YOUR_THINGSPEAK_CHANNEL_API_KEY>;
+
+char ssid[] = <YOUR_WIFI>;
+char pass[] = <WIFI_PASSWORD>;
+
+/android/app/src/main/res/values/api.xml:
+
+`<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="THINGSPEAK_READ_KEY" type="string">FSNN2HKUH8OM9DIQ</item>
+    <item name="THINGSPEAK_CHANNEL" type="string">1093516</item>
+</resources>`
+
 ### Dependencies
 * [HelloCharts](https://github.com/lecho/hellocharts-android)
 * [Material Design](https://material.io/components)
-
-## Sketch
-* Post Sensor Data to Thingspeak in interval
 
 ### Dependencies
 * [Thingspeak](https://thingspeak.com/)

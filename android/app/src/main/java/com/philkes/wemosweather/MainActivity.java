@@ -67,6 +67,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Util.loadValues(getResources());
+
         tempSlider=new DataSlider(
                 this,
                 (PieChartView) findViewById(R.id.tempPie),

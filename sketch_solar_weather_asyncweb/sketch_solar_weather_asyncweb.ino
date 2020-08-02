@@ -1,16 +1,3 @@
-/*
-  Rui Santos
-  Complete project details at https://RandomNerdTutorials.com
-
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files.
-
-  The above copyright notice and this permission notice shall be included in all
-  copies or substantial portions of the Software.
-*/
-
-// Import required libraries
-
 #include <ESP8266WiFi.h>
 #include <ESPAsyncTCP.h>
 #include <ESPAsyncWebServer.h>
@@ -19,7 +6,7 @@
 #include "Seeed_BME280.h"
 #include <NTPClient.h>
 #include <WiFiUdp.h>
-
+#include "api.h"
 
 //Connect D0 to RST for ESP.deepSleep awake!
 
@@ -27,11 +14,7 @@
 // THINGSPEAK_ONLY = 0: Use AsnycWebser + NTP + Thingspeak postData
 #define THINGSPEAK_ONLY 1
 
-char ssid[] = "WLAN Ke";
-char pass[] = "3616949541664967";
-
 const char* api_server = "api.thingspeak.com";
-const char* api_key = "OO615HXB4VWR8TKR";
 
 BME280 bme280;
 
