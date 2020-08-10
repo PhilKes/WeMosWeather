@@ -22,9 +22,12 @@ WiFiClient client;
 unsigned int periodTimeInMs = 300000;
 unsigned int blinkDelay = 200;
 
+const int LED_BRIGHTNESS=A0;
+
 float humidity = 0;
 float temp = 0;
 float pressure = 0;
+float brightness= 0;
 
 void initializeData()
 {
@@ -38,8 +41,9 @@ void readNewData() {
   temp = bme280.getTemperature();
   pressure = bme280.getPressure() / 100.0 ; // pressure in hPa
   humidity = bme280.getHumidity();
+  brightness= analogRead(A0);
 
-  Serial.println("Temp: " + String(temp) + "C° Humidity: " + String(humidity) + " Pressure: " + String(pressure) + "hPa");
+  Serial.println("Temp: " + String(temp) + "C° Humidity: " + String(humidity) + " Pressure: " + String(pressure) + "hPa Brightness: "+String(brightness));
 }
 
 
@@ -65,6 +69,9 @@ void postData(float temperature, float humidity, float pressure) {
     dataToThingSpeak += "&field3=";
     dataToThingSpeak += String(humidity);
 
+    dataToThingSpeak += "&field4=";
+    dataToThingSpeak += String(brightness);
+
     dataToThingSpeak += " HTTP/1.1\r\nHost: a.c.d\r\nConnection: close\r\n\r\n";
     dataToThingSpeak += "";
     client.print(dataToThingSpeak);
@@ -88,6 +95,7 @@ void setup() {
   // Serial port for debugging purposes
   Serial.begin(115200);
   pinMode(BUILTIN_LED, OUTPUT);
+  pinMode(LED_BRIGHTNESS,INPUT);
   // Initialize the sensor
   if (!bme280.init()) {
     Serial.println("Could not find a valid BME280 sensor, check wiring!");
