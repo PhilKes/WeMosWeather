@@ -127,8 +127,9 @@ public class DataSlider {
         //fillValue.setValue(maxValue - value);
         fillValue.setTarget(maxValue - value-dividerSize);
         chart.getPieChartData().setCenterText2(value+" "+units);
-        chart.getPieChartData().finish();
-        chart.setPieChartData(chart.getPieChartData());
+        //chart.getPieChartData().finish();
+        /*chart.setPieChartData(chart.getPieChartData());*/
+        chart.startDataAnimation();
         return this;
     }
 
