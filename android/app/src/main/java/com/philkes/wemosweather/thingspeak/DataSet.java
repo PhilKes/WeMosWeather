@@ -1,5 +1,7 @@
 package com.philkes.wemosweather.thingspeak;
 
+import com.annimon.stream.Collectors;
+import com.annimon.stream.Stream;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -13,13 +15,13 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
 
 /**
  * Data grouped by Days
@@ -50,7 +52,7 @@ public class DataSet {
     }
 
     public DayData getDayNumberData(int dayNumber) {
-        return data.entrySet().stream().collect(Collectors.toList()).get(dayNumber).getValue();
+        return new ArrayList<>(data.entrySet()).get(dayNumber).getValue();
     }
 
     public TreeMap<LocalDate, DayData> getData() {
@@ -90,15 +92,15 @@ public class DataSet {
         }
 
         public float getAverageTemp() {
-            return (float) data.stream().mapToDouble(entry -> (double) entry.getTemperature()).average().orElse(0.0);
+            return (float) Stream.of(data).mapToDouble(entry -> (double) entry.getTemperature()).average().orElse(0.0);
         }
 
         public float getMaxTemp() {
-            return (float) data.stream().mapToDouble(entry -> (double) entry.getTemperature()).max().orElse(0.0);
+            return (float) Stream.of(data).mapToDouble(entry -> (double) entry.getTemperature()).max().orElse(0.0);
         }
 
         public float getMinTemp() {
-            return (float) data.stream().mapToDouble(entry -> (double) entry.getTemperature()).min().orElse(0.0);
+            return (float) Stream.of(data).mapToDouble(entry -> (double) entry.getTemperature()).min().orElse(0.0);
         }
 
         public String getLabel() {
@@ -106,7 +108,7 @@ public class DataSet {
         }
 
         public DataEntry getEntryNumberData(int entryNumber) {
-           return data.stream().collect(Collectors.toList()).get(entryNumber);
+           return Stream.of(data).collect(Collectors.toList()).get(entryNumber);
         }
     }
 

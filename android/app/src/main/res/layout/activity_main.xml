@@ -8,9 +8,7 @@
         android:layout_height="match_parent"
         tools:context=".MainActivity">
 
-    <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
@@ -142,6 +140,4 @@
         </FrameLayout>
 
 
-
-    </com.google.android.material.card.MaterialCardView>
 </FrameLayout>
