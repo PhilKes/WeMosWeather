@@ -51,21 +51,6 @@ public class HistoryActivity extends AppCompatActivity {
 
         dataSet=MainActivity.dataSet;
         updateDataUI();
-       /* String url=getChannelFeedsURL();
-        JsonObjectRequest stringRequest=new JsonObjectRequest
-                (Request.Method.GET, url, null,
-                        *//** Load dataSet from Thingspeak data
-                         * Setup Thingspeak updates*//*
-                        response -> {
-                            Log.d(TAG, "History Thingspeak Data: " + response);
-                            dataSet=Util.gson.fromJson(response.toString(), DataSet.class);
-                            updateDataUI();
-                        },
-                        error -> {
-                            Log.e(TAG, "initial Thingspeak Data: " + error.toString());
-
-                        });
-        queue.add(stringRequest);*/
     }
 
     @Override
@@ -123,18 +108,17 @@ public class HistoryActivity extends AppCompatActivity {
             case "TEMP":
                 return 50;
             case "HUM":
-                return ChartUtils.COLOR_BLUE;
+                return 100;
             case "PRESS":
-                return ChartUtils.COLOR_ORANGE;
+                return 970;
             case "BRIGHT":
-                return ChartUtils.COLOR_VIOLET;
+                return 1024;
 
         }
-        return 255;
+        return 100;
     }
 
     private void updateDataUI() {
-
         initFieldChart("TEMP");
         initFieldChart("HUM");
         initFieldChart("PRESS");
@@ -151,14 +135,9 @@ public class HistoryActivity extends AppCompatActivity {
         chartTemp.setLineChartData(fieldChartData);
 
         chartTemp.setViewportCalculationEnabled(true);
-        int valueSize=fieldChartData.getLines().get(0).getValues().size();
-      /*  Viewport v=new Viewport(0, 50, valueSize, 0);
-        Viewport vMax=new Viewport(0, 50, valueSize, 0);
-        chartTemp.setMaximumViewport(vMax);
-        chartTemp.setCurrentViewport(v);*/
 
         chartTemp.setZoomType(ZoomType.HORIZONTAL);
-        chartTemp.setZoomEnabled(false);
+        chartTemp.setZoomEnabled(true);
 
         chartTemp.setValueSelectionEnabled(true);
 
