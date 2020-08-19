@@ -43,18 +43,19 @@ public class HistoryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
-
         chartTemp=findViewById(R.id.lineChartTemp);
         chartHum=findViewById(R.id.lineChartHum);
         chartPress=findViewById(R.id.lineChartPress);
         chartBright=findViewById(R.id.lineChartBright);
         queue=Volley.newRequestQueue(this);
 
-        String url=getChannelFeedsURL();
+        dataSet=MainActivity.dataSet;
+        updateDataUI();
+       /* String url=getChannelFeedsURL();
         JsonObjectRequest stringRequest=new JsonObjectRequest
                 (Request.Method.GET, url, null,
-                        /** Load dataSet from Thingspeak data
-                         * Setup Thingspeak updates*/
+                        *//** Load dataSet from Thingspeak data
+                         * Setup Thingspeak updates*//*
                         response -> {
                             Log.d(TAG, "History Thingspeak Data: " + response);
                             dataSet=Util.gson.fromJson(response.toString(), DataSet.class);
@@ -64,7 +65,7 @@ public class HistoryActivity extends AppCompatActivity {
                             Log.e(TAG, "initial Thingspeak Data: " + error.toString());
 
                         });
-        queue.add(stringRequest);
+        queue.add(stringRequest);*/
     }
 
     @Override

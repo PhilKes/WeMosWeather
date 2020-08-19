@@ -8,7 +8,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -52,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private LineChartView chartTop;
     private ColumnChartView chartBottom;
 
-    private DataSet dataSet;
+    public static DataSet dataSet;
 
     private DataSet.DayData selectedDayData=null;
     private DataEntry selectedEntry=null;
@@ -182,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater=getMenuInflater();
-        inflater.inflate(R.menu.mainactions, menu);
+        inflater.inflate(R.menu.main_actions, menu);
         return true;
     }
 
@@ -191,7 +190,6 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.actions_history:
                 Intent intent=new Intent(this, HistoryActivity.class);
-                //intent.putExtra(EXTRA_MESSAGE, message);
                 startActivity(intent);
                 return true;
             default:
