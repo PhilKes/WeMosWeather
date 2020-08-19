@@ -27,6 +27,9 @@
 * Displays Data on UI Dashboard
 * Shows History of all collected Data
 
+### TODOs
+* Historie -> Replication of Thingspeak Public View
+
 #### Dependencies
 * [HelloCharts](https://github.com/lecho/hellocharts-android)
 * [Material Design](https://material.io/components)

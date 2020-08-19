@@ -1,9 +1,14 @@
 package com.philkes.wemosweather;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -36,7 +41,7 @@ import static com.philkes.wemosweather.thingspeak.Util.getChannelFeedsURL;
 import static com.philkes.wemosweather.thingspeak.Util.getLastChannelEntryURL;
 
 public class MainActivity extends AppCompatActivity {
-    public static final boolean DEBUG_LAYOUT= false;
+    public static final boolean DEBUG_LAYOUT=false;
 
     public static final String TAG="WeMosWeather";
     public static final int UPDATE_DELAY=20000;
@@ -68,7 +73,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Util.loadValues(getResources());
-
         tempSlider=new DataSlider(
                 this,
                 (PieChartView) findViewById(R.id.tempPie),
@@ -112,11 +116,12 @@ public class MainActivity extends AppCompatActivity {
      * Requests and loads DataSet from Thingspeak channel data
      */
     private void requestInitialThingspeakData() {
-        if(DEBUG_LAYOUT){
-            dataSet=Util.generateTestDataSet(100,100,-10,35);
+        if(DEBUG_LAYOUT) {
+            dataSet=Util.generateTestDataSet(100, 100, -10, 35);
             updateDataUI();
             hideProgressBar();
-        }else {
+        }
+        else {
             String url=getChannelFeedsURL();
             JsonObjectRequest stringRequest=new JsonObjectRequest
                     (Request.Method.GET, url, null,
@@ -147,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
         SubcolumnValue subcolumnValue=chartBottom.getChartData().getColumns().get(firstIdx)
                 .getValues().get(secIdx);
         generateTimeValues(firstIdx, subcolumnValue);
-        chartBottom.selectValue(new SelectedValue(chartBottom.getChartData().getColumns().size()-1, 0, SelectedValue.SelectedValueType.COLUMN));
+        chartBottom.selectValue(new SelectedValue(chartBottom.getChartData().getColumns().size() - 1, 0, SelectedValue.SelectedValueType.COLUMN));
         Log.d(TAG, "updateDataUI: " + currentData);
     }
 
@@ -174,6 +179,26 @@ public class MainActivity extends AppCompatActivity {
         }, interval);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater=getMenuInflater();
+        inflater.inflate(R.menu.mainactions, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.actions_history:
+                Intent intent=new Intent(this, HistoryActivity.class);
+                //intent.putExtra(EXTRA_MESSAGE, message);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
 
     private void generateDaysValues() {
         ColumnChartData columnData=Util.generateColumnData(dataSet);
@@ -192,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
         chartBottom.setMaximumViewport(vMax);
         chartBottom.setCurrentViewport(v);
         chartBottom.setZoomEnabled(false);
-        chartBottom.selectValue(new SelectedValue(columnData.getColumns().size()-1, 0, SelectedValue.SelectedValueType.COLUMN));
+        chartBottom.selectValue(new SelectedValue(columnData.getColumns().size() - 1, 0, SelectedValue.SelectedValueType.COLUMN));
     }
 
     private void generateTimeValues(int dayIndex, SubcolumnValue dayColumn) {
@@ -222,7 +247,7 @@ public class MainActivity extends AppCompatActivity {
         chartTop.startDataAnimation(300);
     }
 
-    public void displaySelectedEntry(){
+    public void displaySelectedEntry() {
         tempSlider.updateValue(selectedEntry.getTemperature());
         humSlider.updateValue(selectedEntry.getHumidity());
         textTime.setText(selectedEntry.getTimeString());
@@ -234,8 +259,8 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onValueSelected(int columnIndex, int subcolumnIndex, SubcolumnValue value) {
             generateTimeValues(columnIndex, value);
-            selectedDayData= dataSet.getDayNumberData(columnIndex);
-            chartTop.selectValue(new SelectedValue(0, chartTop.getLineChartData().getLines().get(0).getValues().size()-1, SelectedValue.SelectedValueType.LINE));
+            selectedDayData=dataSet.getDayNumberData(columnIndex);
+            chartTop.selectValue(new SelectedValue(0, chartTop.getLineChartData().getLines().get(0).getValues().size() - 1, SelectedValue.SelectedValueType.LINE));
         }
 
         @Override
@@ -243,12 +268,13 @@ public class MainActivity extends AppCompatActivity {
             //generateLineData();
         }
     }
+
     private class EntryPointValueListener implements LineChartOnValueSelectListener {
 
         @Override
         public void onValueSelected(int lineIdx, int pointIdx, PointValue pointValue) {
-            System.out.println(String.format("Selected %d , %d of"+pointValue,lineIdx,pointIdx));
-            selectedEntry= selectedDayData.getEntryNumberData(pointIdx);
+            System.out.println(String.format("Selected %d , %d of" + pointValue, lineIdx, pointIdx));
+            selectedEntry=selectedDayData.getEntryNumberData(pointIdx);
             displaySelectedEntry();
 
         }

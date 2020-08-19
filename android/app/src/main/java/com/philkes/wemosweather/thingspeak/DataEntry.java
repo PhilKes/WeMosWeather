@@ -15,7 +15,6 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
 import java.lang.reflect.Type;
-import java.util.Locale;
 import java.util.Map;
 
 /** Temperature, Humidity, Pressure Data for a Timestamp*/
@@ -26,17 +25,19 @@ public class DataEntry implements Comparable<DataEntry> {
     private float temperature;
     private float humidity;
     private float pressure;
+    private float brightness;
     private DateTime time;
 
     public DataEntry() {
     }
 
-    public DataEntry(long id, float temperature, float humidity, float pressure, DateTime time) {
+    public DataEntry(long id, float temperature, float humidity, float pressure,float brightness, DateTime time) {
         this.id=id;
         this.temperature=temperature;
         this.humidity=humidity;
         this.pressure=pressure;
         this.time=time;
+        this.brightness=brightness;
     }
 
 
@@ -46,6 +47,15 @@ public class DataEntry implements Comparable<DataEntry> {
 
     public DataEntry setId(long id) {
         this.id=id;
+        return this;
+    }
+
+    public float getBrightness() {
+        return brightness;
+    }
+
+    public DataEntry setBrightness(float brightness) {
+        this.brightness=brightness;
         return this;
     }
 
@@ -106,7 +116,7 @@ public class DataEntry implements Comparable<DataEntry> {
     @NonNull
     @Override
     public String toString() {
-        return String.format("{ Temp:%f\tHum:%f\tPress:%f}",temperature,humidity,pressure);
+        return String.format("{ Temp:%f\tHum:%f\tPress:%f\tBright:%f}",temperature,humidity,pressure,brightness);
     }
 
     public String getLabel() {
@@ -124,7 +134,7 @@ public class DataEntry implements Comparable<DataEntry> {
             }.getType();
             Map<String, String> data=context.deserialize(json, mapType);
             if(!data.containsKey("field1") || !data.containsKey("field2")
-                    || !data.containsKey("field3") || !data.containsKey("created_at")
+                    || !data.containsKey("field3") || !data.containsKey("field4") || !data.containsKey("created_at")
                     || !data.containsKey("entry_id")) {
                 throw new JsonParseException("Invalid fields");
             }
@@ -134,6 +144,7 @@ public class DataEntry implements Comparable<DataEntry> {
                         .setTemperature(Float.parseFloat(data.get("field1")))
                         .setPressure(Float.parseFloat(data.get("field2")))
                         .setHumidity(Float.parseFloat(data.get("field3")))
+                        .setBrightness(Float.parseFloat(data.get("field4")))
                         .setId(Long.parseLong(data.get("entry_id")));
 
                 DateTime dateTime = parser.parseDateTime(data.get("created_at"));

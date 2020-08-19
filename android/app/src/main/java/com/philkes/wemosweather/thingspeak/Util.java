@@ -3,6 +3,7 @@ package com.philkes.wemosweather.thingspeak;
 import android.content.res.Resources;
 import android.provider.ContactsContract;
 
+import com.annimon.stream.Stream;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.philkes.wemosweather.R;
@@ -43,8 +44,8 @@ public class Util {
     public static String CHANNEL_ID;
 
     public static void loadValues(Resources resources) {
-        CHANNEL_ID= resources.getString(R.string.THINGSPEAK_CHANNEL);
-        READ_KEY= resources.getString(R.string.THINGSPEAK_READ_KEY);
+        CHANNEL_ID=resources.getString(R.string.THINGSPEAK_CHANNEL);
+        READ_KEY=resources.getString(R.string.THINGSPEAK_READ_KEY);
     }
 
     public static final String THINGSPEAK_URL="https://api.thingspeak.com/";
@@ -114,7 +115,7 @@ public class Util {
                     .setLabel("" + dataEntry.getTemperature())
             );
             humidityVals.add(new PointValue(dataCounter, 0f)
-                    .setTarget(dataCounter, dataEntry.getHumidity() * TEMP_HUM_SCALE- Math.abs(TEMP_MIN)));
+                    .setTarget(dataCounter, dataEntry.getHumidity() * TEMP_HUM_SCALE - Math.abs(TEMP_MIN)));
             axisValues.add(new AxisValue(dataCounter).setLabel(dataEntry.getLabel()));
             dataCounter++;
         }
@@ -162,6 +163,81 @@ public class Util {
         return lineData;
     }
 
+    public static float getFieldFromEntry(String field, DataEntry dataEntry) {
+        switch(field) {
+            case "TEMP":
+                return dataEntry.getTemperature();
+            case "HUM":
+                return dataEntry.getHumidity();
+            case "PRESS":
+                return dataEntry.getPressure();
+            case "BRIGHT":
+                return dataEntry.getBrightness();
+
+        }
+        return -1f;
+    }
+
+ public static String getFieldUnits(String field) {
+        switch(field) {
+            case "TEMP":
+                return "Temperature C°";
+            case "HUM":
+                return "Humidity %";
+            case "PRESS":
+                return "Pressure hPA";
+            case "BRIGHT":
+                return "Brightness";
+
+        }
+        return "Unit";
+    }
+
+
+    public static LineChartData generateHistoryData(DataSet dataSet, String field, int days, int color) {
+
+        List<AxisValue> axisValues=new ArrayList<AxisValue>();
+        List<PointValue> values=new ArrayList<PointValue>();
+        int dataCounter=0;
+        for(DataSet.DayData dayData : dataSet.getData().values()) {
+            for(DataEntry dataEntry : dayData.getData()) {
+                values.add(new PointValue(dataCounter, 0f)
+                        .setTarget(dataCounter, getFieldFromEntry(field,dataEntry))
+                        .setLabel("" + getFieldFromEntry(field,dataEntry))
+                );
+                axisValues.add(new AxisValue(dataCounter).setLabel(dataEntry.getLabel()));
+                dataCounter++;
+            }
+        }
+
+        Line valueLine=new Line(values);
+        valueLine.setColor(ChartUtils.darkenColor(color))
+                .setCubic(true)
+                .setPointRadius(1)
+                .setHasLabelsOnlyForSelected(true);
+
+        List<Line> lines=new ArrayList<Line>();
+        lines.add(valueLine);
+
+        LineChartData lineData=new LineChartData(lines);
+
+        lineData.setValueLabelBackgroundEnabled(true);
+
+        lineData.setAxisXBottom(new Axis(axisValues)
+                .setHasLines(true)
+                .setMaxLabelChars(6)
+        );
+        lineData.setAxisYLeft(new Axis()
+                .setHasLines(true)
+                .setMaxLabelChars(3)
+                .setName(getFieldUnits(field))
+                .setTextSize(CHART_TEXT_SIZE)
+                .setTextColor(color)
+        );
+
+        return lineData;
+    }
+
     public static DecimalFormat decimalFormat=new DecimalFormat("#.00");
 
     private static int MINUTES_PER_DAY=24 * 60;
@@ -169,8 +245,8 @@ public class Util {
     public static DataSet generateTestDataSet(int days, int entriesPerDay, float minTemp, float maxTemp) {
         float tempRange=(maxTemp - minTemp);
         DataSet dataSet=new DataSet();
-        LocalDate date=LocalDate.now().minusDays(days-1);
-        int entryInterval=(int)Math.round(Math.ceil(MINUTES_PER_DAY  / entriesPerDay));
+        LocalDate date=LocalDate.now().minusDays(days - 1);
+        int entryInterval=(int) Math.round(Math.ceil(MINUTES_PER_DAY / entriesPerDay));
 
         int nightFactor=Math.round(tempRange / 3);
         int nightBorder=entriesPerDay - (entriesPerDay / 5);
@@ -178,7 +254,7 @@ public class Util {
         for(int day=0; day<days; day++) {
             DataSet.DayData dayData=dataSet.getOrAddDayData(date);
             DateTime entryTime=new DateTime(date.toDate());
-            float dayMaxTemp=maxTemp - (maxTemp * (float) Math.random()*0.5f);
+            float dayMaxTemp=maxTemp - (maxTemp * (float) Math.random() * 0.5f);
             float dayTempRange=(dayMaxTemp - minTemp);
 
             for(int entry=0; entry<entriesPerDay; entry++) {
@@ -225,7 +301,7 @@ public class Util {
 
         @Override
         public int formatValueForAutoGeneratedAxis(char[] formattedValue, float value, int autoDecimalDigits) {
-            float scaledValue=(value + sub+bias ) / scale;
+            float scaledValue=(value + sub + bias) / scale;
             int x=super.formatValueForAutoGeneratedAxis(formattedValue, scaledValue, this.decimalDigits);
             return x;
         }
