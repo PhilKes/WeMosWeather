@@ -25,13 +25,13 @@ public class DataEntry implements Comparable<DataEntry> {
     private float temperature;
     private float humidity;
     private float pressure;
-    private float brightness;
+    private int brightness;
     private DateTime time;
 
     public DataEntry() {
     }
 
-    public DataEntry(long id, float temperature, float humidity, float pressure,float brightness, DateTime time) {
+    public DataEntry(long id, float temperature, float humidity, float pressure, int brightness, DateTime time) {
         this.id=id;
         this.temperature=temperature;
         this.humidity=humidity;
@@ -50,11 +50,11 @@ public class DataEntry implements Comparable<DataEntry> {
         return this;
     }
 
-    public float getBrightness() {
+    public int getBrightness() {
         return brightness;
     }
 
-    public DataEntry setBrightness(float brightness) {
+    public DataEntry setBrightness(int brightness) {
         this.brightness=brightness;
         return this;
     }
@@ -116,7 +116,7 @@ public class DataEntry implements Comparable<DataEntry> {
     @NonNull
     @Override
     public String toString() {
-        return String.format("{ Temp:%f\tHum:%f\tPress:%f\tBright:%f}",temperature,humidity,pressure,brightness);
+        return String.format("{ Temp:%f\tHum:%f\tPress:%f\tBright:%d}",temperature,humidity,pressure,brightness);
     }
 
     public String getLabel() {
@@ -133,18 +133,22 @@ public class DataEntry implements Comparable<DataEntry> {
             Type mapType=new TypeToken<Map<String, String>>() {
             }.getType();
             Map<String, String> data=context.deserialize(json, mapType);
-            if(!data.containsKey("field1") || !data.containsKey("field2")
-                    || !data.containsKey("field3") || !data.containsKey("field4") || !data.containsKey("created_at")
+            if(!data.containsKey("created_at")
                     || !data.containsKey("entry_id")) {
                 throw new JsonParseException("Invalid fields");
             }
             DataEntry entry=null;
+            for(int i=1; i<5; i++) {
+                if(data.get("field"+i)==null){
+                    return null;
+                }
+            }
             try {
                 entry=new DataEntry()
                         .setTemperature(Float.parseFloat(data.get("field1")))
                         .setPressure(Float.parseFloat(data.get("field2")))
                         .setHumidity(Float.parseFloat(data.get("field3")))
-                        .setBrightness(Float.parseFloat(data.get("field4")))
+                        .setBrightness((int)Double.parseDouble(data.get("field4")))
                         .setId(Long.parseLong(data.get("entry_id")));
 
                 DateTime dateTime = parser.parseDateTime(data.get("created_at"));

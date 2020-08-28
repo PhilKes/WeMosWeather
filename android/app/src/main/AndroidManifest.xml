@@ -12,8 +12,13 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
             android:usesCleartextTraffic="true">
-        <activity android:name=".HistoryActivity"></activity>
-        <activity android:name=".MainActivity">
+        <activity android:name=".HistoryActivity"
+                android:screenOrientation="reversePortrait"
+
+                ></activity>
+        <activity android:name=".MainActivity"
+                android:screenOrientation="reversePortrait"
+                >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
