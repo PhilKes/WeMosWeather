@@ -130,8 +130,10 @@ public class MainActivity extends AppCompatActivity {
                                 Log.d(TAG, "initial Thingspeak Data: " + response);
                                 dataSet=Util.gson.fromJson(response.toString(), DataSet.class);
                                 setupThingspeakUpdates(UPDATE_DELAY);
-                                updateDataUI();
-                                hideProgressBar();
+                                runOnUiThread(() -> {
+                                    updateDataUI();
+                                    hideProgressBar();
+                                });
                             },
                             error -> {
                                 Log.e(TAG, "initial Thingspeak Data: " + error.toString());
@@ -169,7 +171,9 @@ public class MainActivity extends AppCompatActivity {
                             Log.d(TAG, "update: " + response);
                             DataEntry entry=Util.gson.fromJson(response.toString(), DataEntry.class);
                             if(dataSet.addEntry(entry)) {
-                                updateDataUI();
+                                runOnUiThread(() -> {
+                                    updateDataUI();
+                                });
                             }
                         }, error -> Log.d(TAG, "update: " + error.toString()));
                 queue.add(stringRequest);
@@ -187,7 +191,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
+        switch(item.getItemId()) {
             case R.id.actions_history:
                 Intent intent=new Intent(this, HistoryActivity.class);
                 startActivity(intent);

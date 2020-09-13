@@ -14,31 +14,100 @@
                 android:layout_height="match_parent">
 
             <LinearLayout
+                    android:id="@+id/linearLayout"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginTop="10dp"
                     android:orientation="vertical"
                     app:layout_constraintTop_toTopOf="parent">
 
-                <LinearLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
+                        style="@style/LayoutCardStyle"
+                        android:paddingStart="0dp"
+                        android:layout_marginStart="0dp"
+                        android:layout_marginEnd="0dp"
+                        android:paddingEnd="0dp"
                         android:layout_width="match_parent"
-                        android:layout_height="200dp"
-                        android:orientation="horizontal">
+                        android:layout_height="200dp">
 
+                    <ImageView
+                            android:background="@drawable/weather_shape"
+                            android:id="@+id/imageView"
+                            android:layout_width="86dp"
+                            android:layout_height="86dp"
+                            android:paddingBottom="4dp"
+                            android:src="@drawable/weather_storm"
+                            app:layout_constraintEnd_toEndOf="@+id/linearLayout2"
+                            app:layout_constraintStart_toStartOf="@+id/linearLayout2"
+                            app:layout_constraintTop_toTopOf="@+id/linearLayout2" />
 
-                    <lecho.lib.hellocharts.view.PieChartView
-                            android:id="@+id/tempPie"
-                            android:layout_width="0dp"
+                    <TextView
+                            android:id="@+id/textWeather"
+                            style="@style/FieldStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:text="Weather"
+                            app:layout_constraintEnd_toEndOf="@+id/imageView"
+                            app:layout_constraintStart_toStartOf="@+id/imageView"
+                            app:layout_constraintTop_toBottomOf="@+id/imageView" />
+
+                    <LinearLayout
+                            android:id="@+id/linearLayout2"
+                            android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_weight=".50" />
+                            android:orientation="horizontal"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                        <lecho.lib.hellocharts.view.PieChartView
+                                android:id="@+id/tempPie"
+                                android:padding="10dp"
+                                android:paddingStart="0dp"
+                                android:layout_marginStart="-14dp"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight=".50" />
 
 
-                    <lecho.lib.hellocharts.view.PieChartView
-                            android:id="@+id/humPie"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight=".50" />
-                </LinearLayout>
+                        <lecho.lib.hellocharts.view.PieChartView
+                                android:id="@+id/humPie"
+                                android:padding="10dp"
+                                android:paddingEnd="0dp"
+                                android:layout_marginEnd="-14dp"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight=".50" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="4dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent">
+
+                        <TextView
+                                android:id="@+id/textDate"
+                                style="@style/FieldStyle"
+                                android:paddingStart="6dp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="8dp"
+                                android:text="DD.mm" />
+
+                        <TextView
+                                android:id="@+id/textTime"
+                                style="@style/FieldStyle"
+                                android:paddingEnd="6dp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="HH:mm"/>
+
+                    </LinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <LinearLayout
                         android:layout_width="match_parent"
@@ -54,6 +123,7 @@
 
                         <lecho.lib.hellocharts.view.LineChartView
                                 android:id="@+id/lineChart1"
+                                style="@style/LayoutCardStyle"
                                 android:layout_width="0dp"
                                 android:layout_height="200dp"
                                 android:layout_marginStart="8dp"
@@ -66,6 +136,7 @@
 
                         <lecho.lib.hellocharts.view.ColumnChartView
                                 android:id="@+id/colChart1"
+                                style="@style/LayoutCardStyle"
                                 android:layout_width="0dp"
                                 android:layout_height="0dp"
                                 android:layout_marginStart="8dp"
@@ -82,47 +153,35 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <TextView
+       <!--     <TextView
+
                     android:id="@+id/dateLabel"
+                    style="@style/LabelStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Date"
+                    android:layout_marginTop="16dp"
+                    android:paddingLeft="4dp"
+                    android:paddingRight="4dp"
                     app:layout_constraintBottom_toTopOf="@+id/textDate"
                     app:layout_constraintEnd_toEndOf="@+id/textDate"
-                    app:layout_constraintStart_toStartOf="@+id/textDate" />
+                    app:layout_constraintStart_toStartOf="@+id/textDate"
+                    app:layout_constraintTop_toTopOf="parent" />-->
 
-            <TextView
-                    android:id="@+id/textDate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp"
-                    android:text="DD.mm"
-                    android:textSize="16dp"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
+
+
+        <!--    <TextView
+                    style="@style/LabelStyle"
                     android:id="@+id/timeLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Time"
                     app:layout_constraintBottom_toTopOf="@+id/textTime"
                     app:layout_constraintEnd_toEndOf="@+id/textTime"
-                    app:layout_constraintStart_toStartOf="@+id/textTime" />
+                    app:layout_constraintStart_toStartOf="@+id/textTime" />-->
 
-            <TextView
-                    android:id="@+id/textTime"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="175dp"
-                    android:text="HH:mm"
-                    android:textSize="16dp"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -93,7 +93,7 @@ public class DataEntry implements Comparable<DataEntry> {
     }
 
     public String getTimeString(){
-        return formatter.print(time);
+        return formatter.print(time)+"h";
     }
 
     public DataEntry setTime(DateTime time) {

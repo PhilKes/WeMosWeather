@@ -29,7 +29,7 @@ import java.util.List;
 public class DataSlider {
     public static final String BASE_URL="http://192.168.178.62/";
     private Context context;
-    public static final int LABEL_SIZE=38;
+    public static final int LABEL_SIZE=30;
 
     private PieChartView chart;
     private float maxValue;

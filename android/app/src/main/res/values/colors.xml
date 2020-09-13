@@ -4,4 +4,5 @@
     <color name="colorPrimaryDark">#020202</color>
     <color name="colorAccent">#FF0000</color>
     <color name="actionBarText">#FFF</color>
+    <color name="cardBackground">#1E1E1E</color>
 </resources>

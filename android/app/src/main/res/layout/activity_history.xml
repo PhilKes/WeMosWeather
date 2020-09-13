@@ -18,6 +18,7 @@
                 android:orientation="vertical">
 
             <lecho.lib.hellocharts.view.LineChartView
+                    style="@style/LayoutCardStyle"
                     android:id="@+id/lineChartTemp"
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
@@ -31,6 +32,8 @@
 
 
             <lecho.lib.hellocharts.view.LineChartView
+                    style="@style/LayoutCardStyle"
+
                     android:id="@+id/lineChartHum"
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
@@ -44,6 +47,8 @@
 
 
             <lecho.lib.hellocharts.view.LineChartView
+                    style="@style/LayoutCardStyle"
+
                     android:id="@+id/lineChartPress"
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
@@ -56,6 +61,8 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
             <lecho.lib.hellocharts.view.LineChartView
+                    style="@style/LayoutCardStyle"
+
                     android:id="@+id/lineChartBright"
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
