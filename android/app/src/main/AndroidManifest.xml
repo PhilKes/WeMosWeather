@@ -13,11 +13,11 @@
             android:theme="@style/AppTheme"
             android:usesCleartextTraffic="true">
         <activity android:name=".HistoryActivity"
-                android:screenOrientation="reversePortrait"
+                android:screenOrientation="sensorPortrait"
 
                 ></activity>
         <activity android:name=".MainActivity"
-                android:screenOrientation="reversePortrait"
+                android:screenOrientation="sensorPortrait"
                 >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
