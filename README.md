@@ -28,7 +28,8 @@
 * Shows History of all collected Data
 
 ### TODOs
-* Historie -> Replication of Thingspeak Public View
+* Home Screen Widget
+* Weather Prediction based on Pressure values
 
 #### Dependencies
 * [HelloCharts](https://github.com/lecho/hellocharts-android)

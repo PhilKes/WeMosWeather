@@ -16,6 +16,7 @@ import org.joda.time.format.ISODateTimeFormat;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +37,7 @@ public class DataSet {
     }
 
     public DataEntry getLatestData() {
-        Map.Entry<LocalDate,DayData> latestDayData=
+        Map.Entry<LocalDate, DayData> latestDayData=
                 data.lastEntry();
         return latestDayData==null ? null : latestDayData.getValue().getNewestData();
     }
@@ -55,12 +56,35 @@ public class DataSet {
         return new ArrayList<>(data.entrySet()).get(dayNumber).getValue();
     }
 
+    public List<DayData> asList(){
+        return new ArrayList<>(data.values());
+    }
+
     public TreeMap<LocalDate, DayData> getData() {
         return data;
     }
 
     public Set<LocalDate> getDates() {
         return data.keySet();
+    }
+
+    public List<DayData> getPreviousDays(int pastDays){
+        List<DayData> dayData= new ArrayList<>();
+        List<DayData> allDays= asList();
+        for(int i=0; i<pastDays; i++) {
+            dayData.add(allDays.get(allDays.size()-1-i));
+        }
+        return dayData;
+    }
+
+    public List<DataEntry> getPreviousHours(int pastHours) {
+        //TODO Wenn über Tagesgrenze?
+        final DateTime minTime=new DateTime()
+                .minusHours(pastHours)
+                .minusSeconds(1);
+        return Stream.of(getPreviousDays(2)).map(dayData->dayData.getData())
+                .flatMap(Stream::of)
+                .filter(entry -> entry.getTime().isAfter(minTime)).toList();
     }
 
     /**
@@ -108,7 +132,7 @@ public class DataSet {
         }
 
         public DataEntry getEntryNumberData(int entryNumber) {
-           return Stream.of(data).collect(Collectors.toList()).get(entryNumber);
+            return Stream.of(data).collect(Collectors.toList()).get(entryNumber);
         }
     }
 

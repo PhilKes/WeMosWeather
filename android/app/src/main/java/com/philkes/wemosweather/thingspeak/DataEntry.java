@@ -116,7 +116,7 @@ public class DataEntry implements Comparable<DataEntry> {
     @NonNull
     @Override
     public String toString() {
-        return String.format("{ Temp:%f\tHum:%f\tPress:%f\tBright:%d}",temperature,humidity,pressure,brightness);
+        return String.format("%s{ Temp:%f\tHum:%f\tPress:%f\tBright:%d}",time.toString("dd.MM.YYYY HH:mm:ss"),temperature,humidity,pressure,brightness);
     }
 
     public String getLabel() {

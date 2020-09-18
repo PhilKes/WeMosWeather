@@ -29,7 +29,7 @@ import java.util.List;
 public class DataSlider {
     public static final String BASE_URL="http://192.168.178.62/";
     private Context context;
-    public static final int LABEL_SIZE=30;
+    public static final int LABEL_SIZE=80;
 
     private PieChartView chart;
     private float maxValue;
@@ -86,13 +86,13 @@ public class DataSlider {
 
         // Get font size from dimens.xml and convert it to sp(library uses sp values).
         data.setCenterText1FontSize(ChartUtils.px2sp(context.getResources().getDisplayMetrics().scaledDensity,
-                (int) LABEL_SIZE-5));
+                (int) LABEL_SIZE));
         data.setCenterText1Color(context.getResources().getColor(R.color.actionBarText));
         data.setCenterText2Color(context.getResources().getColor(R.color.actionBarText));
         //Typeface tf = Typeface.createFromAsset(getActivity().getAssets(), "Roboto-Italic.ttf");
         //data.setCenterText2Typeface(tf);
-        data.setCenterText2FontSize(ChartUtils.px2sp(context.getResources().getDisplayMetrics().scaledDensity,
-                (int) LABEL_SIZE+20));
+    /*    data.setCenterText2FontSize(ChartUtils.px2sp(context.getResources().getDisplayMetrics().scaledDensity,
+                (int) LABEL_SIZE));*/
         data.setSlicesSpacing(0);
         chart.setValueTouchEnabled(false);
         chart.setChartRotationEnabled(false);
@@ -126,7 +126,7 @@ public class DataSlider {
         SliceValue fillValue=chart.getPieChartData().getValues().get(2);
         //fillValue.setValue(maxValue - value);
         fillValue.setTarget(maxValue - value-dividerSize);
-        chart.getPieChartData().setCenterText2(value+" "+units);
+        chart.getPieChartData().setCenterText1(Math.round(value)+units);
         //chart.getPieChartData().finish();
         /*chart.setPieChartData(chart.getPieChartData());*/
         chart.startDataAnimation();
@@ -147,7 +147,7 @@ public class DataSlider {
     }
 
     public DataSlider setLabel(String label1) {
-        chart.getPieChartData().setCenterText1(label1);
+        //chart.getPieChartData().setCenterText1(label1);
         TAG=label1;
         return this;
     }

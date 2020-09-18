@@ -2,11 +2,13 @@ package com.philkes.wemosweather.thingspeak;
 
 import android.content.res.Resources;
 import android.provider.ContactsContract;
+import android.util.Log;
 
 import com.annimon.stream.Stream;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.philkes.wemosweather.R;
+import com.philkes.wemosweather.prediction.Weather;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -89,10 +91,11 @@ public class Util {
             columns.add(new Column(values).setHasLabelsOnlyForSelected(true));
             axisCounter++;
         }
+        //TODO "HUmidity" außerhalb des kreises
         ColumnChartData colData=new ColumnChartData(columns);
         colData.setAxisXBottom(new Axis(axisValues)
                 .setMaxLabelChars(5)
-                .setName("Last 7 Days")
+                //.setName("Last 7 Days")
                 .setTextSize(CHART_TEXT_SIZE - 2)
         );
         colData.setAxisYLeft(new Axis().setHasLines(true)
@@ -178,7 +181,7 @@ public class Util {
         return -1f;
     }
 
- public static String getFieldUnits(String field) {
+    public static String getFieldUnits(String field) {
         switch(field) {
             case "TEMP":
                 return "Temperature C°";
@@ -202,8 +205,8 @@ public class Util {
         for(DataSet.DayData dayData : dataSet.getData().values()) {
             for(DataEntry dataEntry : dayData.getData()) {
                 values.add(new PointValue(dataCounter, 0f)
-                        .setTarget(dataCounter, getFieldFromEntry(field,dataEntry))
-                        .setLabel("" + getFieldFromEntry(field,dataEntry))
+                        .setTarget(dataCounter, getFieldFromEntry(field, dataEntry))
+                        .setLabel("" + getFieldFromEntry(field, dataEntry))
                 );
                 axisValues.add(new AxisValue(dataCounter).setLabel(dataEntry.getLabel()));
                 dataCounter++;
@@ -276,6 +279,41 @@ public class Util {
             date=date.plusDays(1);
         }
         return dataSet;
+    }
+
+    public static Weather getPrediction(DataSet dataSet) {
+        List<DataEntry> hourData=dataSet.getPreviousHours(1);
+        List<Float> pressureValues=Stream.of(hourData).map(entry -> entry.getPressure()).toList();
+        float pressureDifSum=0;
+        //15min between each entry
+        for(int t=1; t<pressureValues.size(); t++) {
+            float diff=pressureValues.get(t) - pressureValues.get(t - 1);
+                pressureDifSum+=diff;
+        }
+        // Fast changing Pressure
+        if(Math.abs(pressureDifSum)>1.0) {
+            //Pressure going up fast
+            if(pressureDifSum>0) {
+                return Weather.SUNNY;
+            }
+            //Pressure going down fast
+            else {
+                if(Math.abs(pressureDifSum)>1.3) {
+                    return Weather.STORM;
+                }
+                else {
+                    return Weather.RAIN_HEAVY;
+                }
+            }
+        }
+        // Slower changing pressure
+        else{
+            // Medium fast negative Pressure
+            if(Math.abs(pressureDifSum) > 0.5 && pressureDifSum< 0.0){
+                return Weather.CLOUDY;
+            }
+            return Weather.SUNNY;
+        }
     }
 
     /**

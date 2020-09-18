@@ -33,13 +33,12 @@
                     <ImageView
                             android:background="@drawable/weather_shape"
                             android:id="@+id/imageView"
-                            android:layout_width="86dp"
-                            android:layout_height="86dp"
-                            android:paddingBottom="4dp"
+                            android:layout_width="95dp"
+                            android:layout_height="95dp"
                             android:src="@drawable/weather_storm"
                             app:layout_constraintEnd_toEndOf="@+id/linearLayout2"
                             app:layout_constraintStart_toStartOf="@+id/linearLayout2"
-                            app:layout_constraintTop_toTopOf="@+id/linearLayout2" />
+                            app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
                             android:id="@+id/textWeather"
@@ -47,25 +46,54 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="6dp"
-                            android:text="Weather"
+                            android:text="Sunny"
                             app:layout_constraintEnd_toEndOf="@+id/imageView"
                             app:layout_constraintStart_toStartOf="@+id/imageView"
                             app:layout_constraintTop_toBottomOf="@+id/imageView" />
+
+                    <TextView
+                            android:id="@+id/labelTemperature"
+                            style="@style/FieldStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Temperature"
+                            android:textSize="12dp"
+                            android:layout_marginTop="34dp"
+                            android:layout_marginEnd="16dp"
+                            app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
+                            app:layout_constraintEnd_toStartOf="@+id/linearLayout3"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                            android:id="@+id/labelHumidity"
+                            style="@style/FieldStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Humidity"
+                            android:textSize="12dp"
+                            android:layout_marginTop="34dp"
+                            android:layout_marginEnd="20dp"
+                            app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@id/imageView"
+                            app:layout_constraintTop_toTopOf="parent" />
 
                     <LinearLayout
                             android:id="@+id/linearLayout2"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:orientation="horizontal"
+                            android:layout_marginTop="40dp"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent">
 
                         <lecho.lib.hellocharts.view.PieChartView
                                 android:id="@+id/tempPie"
-                                android:padding="10dp"
+                                android:padding="5dp"
                                 android:paddingStart="0dp"
-                                android:layout_marginStart="-14dp"
+                                android:layout_marginStart="-28dp"
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
                                 android:layout_weight=".50" />
@@ -73,15 +101,18 @@
 
                         <lecho.lib.hellocharts.view.PieChartView
                                 android:id="@+id/humPie"
-                                android:padding="10dp"
+                                android:padding="5dp"
                                 android:paddingEnd="0dp"
-                                android:layout_marginEnd="-14dp"
+                                android:layout_marginEnd="-28dp"
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
                                 android:layout_weight=".50" />
                     </LinearLayout>
 
                     <LinearLayout
+                            android:id="@+id/linearLayout3"
+                            android:orientation="vertical"
+                            android:gravity="center_horizontal"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="4dp"
@@ -92,19 +123,16 @@
                         <TextView
                                 android:id="@+id/textDate"
                                 style="@style/FieldStyle"
-                                android:paddingStart="6dp"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginEnd="8dp"
                                 android:text="DD.mm" />
 
                         <TextView
                                 android:id="@+id/textTime"
                                 style="@style/FieldStyle"
-                                android:paddingEnd="6dp"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="HH:mm"/>
+                                android:text="HH:mm" />
 
                     </LinearLayout>
                 </androidx.constraintlayout.widget.ConstraintLayout>

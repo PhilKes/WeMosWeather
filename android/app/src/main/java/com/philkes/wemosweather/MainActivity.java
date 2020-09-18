@@ -9,15 +9,18 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.philkes.wemosweather.components.DataSlider;
+import com.philkes.wemosweather.prediction.Weather;
 import com.philkes.wemosweather.thingspeak.DataEntry;
 import com.philkes.wemosweather.thingspeak.DataSet;
 import com.philkes.wemosweather.thingspeak.Util;
@@ -61,6 +64,9 @@ public class MainActivity extends AppCompatActivity {
     public static final int UPDATE_SOURCE=0;
     private FrameLayout layoutProgressBar;
 
+    private ImageView weatherImage;
+    private TextView textWeather;
+
     RequestQueue queue;
 
     public TextView textTime;
@@ -93,6 +99,9 @@ public class MainActivity extends AppCompatActivity {
 
         textTime=findViewById(R.id.textTime);
         textDate=findViewById(R.id.textDate);
+
+        weatherImage=findViewById(R.id.imageView);
+        textWeather=findViewById(R.id.textWeather);
 
         chartTop=findViewById(R.id.lineChart1);
         chartBottom=findViewById(R.id.colChart1);
@@ -154,7 +163,16 @@ public class MainActivity extends AppCompatActivity {
                 .getValues().get(secIdx);
         generateTimeValues(firstIdx, subcolumnValue);
         chartBottom.selectValue(new SelectedValue(chartBottom.getChartData().getColumns().size() - 1, 0, SelectedValue.SelectedValueType.COLUMN));
+        updateWeather();
         Log.d(TAG, "updateDataUI: " + currentData);
+    }
+
+    private void updateWeather() {
+        Weather weatherPrediction=Util.getPrediction(dataSet);
+        runOnUiThread(() -> {
+            weatherImage.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), weatherPrediction.drawableId));
+            textWeather.setText(weatherPrediction.text);
+        });
     }
 
     /**
