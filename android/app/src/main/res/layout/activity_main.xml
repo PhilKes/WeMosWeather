@@ -46,18 +46,17 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="6dp"
-                            android:text="Sunny"
+                            android:text="Storm"
                             app:layout_constraintEnd_toEndOf="@+id/imageView"
                             app:layout_constraintStart_toStartOf="@+id/imageView"
                             app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
                     <TextView
                             android:id="@+id/labelTemperature"
-                            style="@style/FieldStyle"
+                            style="@style/BigFieldStyle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Temperature"
-                            android:textSize="12dp"
                             android:layout_marginTop="34dp"
                             android:layout_marginEnd="16dp"
                             app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
@@ -67,16 +66,63 @@
 
                     <TextView
                             android:id="@+id/labelHumidity"
-                            style="@style/FieldStyle"
+                            style="@style/BigFieldStyle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Humidity"
-                            android:textSize="12dp"
                             android:layout_marginTop="34dp"
-                            android:layout_marginEnd="20dp"
+                            android:layout_marginEnd="10dp"
                             app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toEndOf="@id/imageView"
+                            app:layout_constraintTop_toTopOf="parent" />
+                    <TextView
+                        android:id="@+id/valueTemperature"
+                        style="@style/ValueStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="10"
+                        android:layout_marginEnd="20px"
+                        android:layout_marginTop="90px"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="@+id/labelTemperature"
+                        app:layout_constraintStart_toStartOf="@+id/labelTemperature"
+                        app:layout_constraintTop_toTopOf="parent" />
+                    <TextView
+                            android:id="@+id/temperatureUnit"
+                            style="@style/UnitStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="C°"
+                            android:layout_marginStart="4px"
+                            android:layout_marginTop="80px"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/valueTemperature"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                            android:id="@+id/valueHumidty"
+                            style="@style/ValueStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="90px"
+                            android:layout_marginEnd="40px"
+                            android:text="10"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="@+id/labelHumidity"
+                            app:layout_constraintStart_toStartOf="@+id/labelHumidity"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                            android:id="@+id/humidityUnit"
+                            style="@style/UnitStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4px"
+                            android:layout_marginTop="80px"
+                            android:text="%"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/valueHumidty"
                             app:layout_constraintTop_toTopOf="parent" />
 
                     <LinearLayout

@@ -25,6 +25,8 @@ import com.philkes.wemosweather.thingspeak.DataEntry;
 import com.philkes.wemosweather.thingspeak.DataSet;
 import com.philkes.wemosweather.thingspeak.Util;
 
+import org.joda.time.DateTime;
+
 import lecho.lib.hellocharts.gesture.ZoomType;
 import lecho.lib.hellocharts.listener.ColumnChartOnValueSelectListener;
 import lecho.lib.hellocharts.listener.LineChartOnValueSelectListener;
@@ -84,7 +86,10 @@ public class MainActivity extends AppCompatActivity {
                 "Temperature",
                 "C°",
                 50f,
-                ChartUtils.COLOR_RED);
+                ChartUtils.COLOR_RED,
+                findViewById(R.id.valueTemperature),
+                findViewById(R.id.temperatureUnit)
+                );
         //.setRequestQueue(queue)
         //.setUpdateWithHTTP("temperature", 3000);
 
@@ -93,7 +98,10 @@ public class MainActivity extends AppCompatActivity {
                 "Humidity",
                 "%",
                 100f,
-                ChartUtils.COLOR_BLUE);
+                ChartUtils.COLOR_BLUE,
+                findViewById(R.id.valueHumidty),
+                findViewById(R.id.humidityUnit)
+        );
         //.setRequestQueue(queue)
         //.setUpdateWithHTTP("humidity", 3000);
 
@@ -163,12 +171,12 @@ public class MainActivity extends AppCompatActivity {
                 .getValues().get(secIdx);
         generateTimeValues(firstIdx, subcolumnValue);
         chartBottom.selectValue(new SelectedValue(chartBottom.getChartData().getColumns().size() - 1, 0, SelectedValue.SelectedValueType.COLUMN));
-        updateWeather();
+        updateWeather(new DateTime());
         Log.d(TAG, "updateDataUI: " + currentData);
     }
 
-    private void updateWeather() {
-        Weather weatherPrediction=Util.getPrediction(dataSet);
+    private void updateWeather(DateTime currentDateTime) {
+        Weather weatherPrediction=Util.getPrediction(currentDateTime,dataSet);
         runOnUiThread(() -> {
             weatherImage.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), weatherPrediction.drawableId));
             textWeather.setText(weatherPrediction.text);
@@ -272,6 +280,7 @@ public class MainActivity extends AppCompatActivity {
         humSlider.updateValue(selectedEntry.getHumidity());
         textTime.setText(selectedEntry.getTimeString());
         textDate.setText(selectedDayData.getLabel());
+        updateWeather(selectedEntry.getTime());
     }
 
     private class DayColumnValueListener implements ColumnChartOnValueSelectListener {

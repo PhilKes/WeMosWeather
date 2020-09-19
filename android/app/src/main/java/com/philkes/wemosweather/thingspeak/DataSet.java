@@ -56,7 +56,7 @@ public class DataSet {
         return new ArrayList<>(data.entrySet()).get(dayNumber).getValue();
     }
 
-    public List<DayData> asList(){
+    public List<DayData> asList() {
         return new ArrayList<>(data.values());
     }
 
@@ -68,23 +68,33 @@ public class DataSet {
         return data.keySet();
     }
 
-    public List<DayData> getPreviousDays(int pastDays){
-        List<DayData> dayData= new ArrayList<>();
-        List<DayData> allDays= asList();
+    public List<DayData> getPreviousDays(DateTime dateTime, int pastDays) {
+        DateTime minTime=dateTime.minusDays(pastDays);
+        List<DayData> dayData=new ArrayList<>();
+        List<DayData> allDays=Stream.of(data)
+                .filter(entry ->
+                        entry.getKey().isBefore(dateTime.toLocalDate()) || entry.getKey().isEqual(dateTime.toLocalDate())
+                                && entry.getKey().isAfter(minTime.toLocalDate())
+                )
+                .map(Map.Entry::getValue).toList();
         for(int i=0; i<pastDays; i++) {
-            dayData.add(allDays.get(allDays.size()-1-i));
+            if(allDays.size() - 1 - i >= 0) {
+                dayData.add(allDays.get(allDays.size() - 1 - i));
+            }else{
+                break;
+            }
         }
         return dayData;
     }
 
-    public List<DataEntry> getPreviousHours(int pastHours) {
+    public List<DataEntry> getPreviousHours(DateTime dateTime, int pastHours) {
         //TODO Wenn über Tagesgrenze?
-        final DateTime minTime=new DateTime()
+        final DateTime minTime=dateTime
                 .minusHours(pastHours)
                 .minusSeconds(1);
-        return Stream.of(getPreviousDays(2)).map(dayData->dayData.getData())
+        return Stream.of(getPreviousDays(dateTime, 2)).map(dayData -> dayData.getData())
                 .flatMap(Stream::of)
-                .filter(entry -> entry.getTime().isAfter(minTime)).toList();
+                .filter(entry -> entry.getTime().isAfter(minTime) && entry.getTime().isBefore(dateTime)).toList();
     }
 
     /**

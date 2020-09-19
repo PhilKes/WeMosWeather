@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.ColorSpace;
 import android.os.Handler;
 import android.util.Log;
+import android.widget.TextView;
 
 import androidx.core.graphics.ColorUtils;
 
@@ -42,17 +43,25 @@ public class DataSlider {
 
     private float dividerSize;
 
+    private TextView valueTxt;
+    private TextView unitsTxt;
+
     public DataSlider(Context context,
                       PieChartView chart,
                       String label,
                       String units,
                       float maxValue,
-                      int color) {
+                      int color,
+                      TextView valueTxt,
+                      TextView unitsTxt
+    ) {
         this.chart=chart;
         this.maxValue=maxValue;
         this.context=context;
         this.color=color;
         this.dividerSize=this.maxValue/120;
+        this.valueTxt=valueTxt;
+        this.unitsTxt=unitsTxt;
         setUnits(units);
         initialize();
         setLabel(label);
@@ -126,7 +135,11 @@ public class DataSlider {
         SliceValue fillValue=chart.getPieChartData().getValues().get(2);
         //fillValue.setValue(maxValue - value);
         fillValue.setTarget(maxValue - value-dividerSize);
-        chart.getPieChartData().setCenterText1(Math.round(value)+units);
+        //chart.getPieChartData().setCenterText1(Math.round(value)+units);
+        chart.getPieChartData().setCenterText1("");
+        valueTxt.setText(Math.round(value)+"");
+        unitsTxt.setText(units);
+
         //chart.getPieChartData().finish();
         /*chart.setPieChartData(chart.getPieChartData());*/
         chart.startDataAnimation();

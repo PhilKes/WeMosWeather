@@ -71,7 +71,7 @@ public class Util {
 
     public static String getChannelFeedsURL() {
         return THINGSPEAK_URL + "/channels/" + CHANNEL_ID + "/feeds.json?api_key=" +
-                READ_KEY + "&days=7" + TIME_ZOME_PARAM;
+                READ_KEY + "&days=14" + TIME_ZOME_PARAM;
     }
 
     public static ColumnChartData generateColumnData(DataSet dataSet) {
@@ -281,8 +281,9 @@ public class Util {
         return dataSet;
     }
 
-    public static Weather getPrediction(DataSet dataSet) {
-        List<DataEntry> hourData=dataSet.getPreviousHours(1);
+    public static Weather getPrediction(DateTime currentDateTime,DataSet dataSet) {
+        List<DataEntry> hourData=dataSet.getPreviousHours(currentDateTime,1);
+        DataEntry mostRecentEntry=hourData.get(hourData.size()-1);
         List<Float> pressureValues=Stream.of(hourData).map(entry -> entry.getPressure()).toList();
         float pressureDifSum=0;
         //15min between each entry
@@ -290,10 +291,13 @@ public class Util {
             float diff=pressureValues.get(t) - pressureValues.get(t - 1);
                 pressureDifSum+=diff;
         }
+        System.out.println("Last hour PressDiffSum:" +pressureDifSum);
         // Fast changing Pressure
         if(Math.abs(pressureDifSum)>1.0) {
             //Pressure going up fast
             if(pressureDifSum>0) {
+                if(mostRecentEntry.getBrightness() < 500)
+                    return Weather.CLEAR_NIGHT;
                 return Weather.SUNNY;
             }
             //Pressure going down fast
@@ -312,6 +316,8 @@ public class Util {
             if(Math.abs(pressureDifSum) > 0.5 && pressureDifSum< 0.0){
                 return Weather.CLOUDY;
             }
+            if(mostRecentEntry.getBrightness() < 500)
+                return Weather.CLEAR_NIGHT;
             return Weather.SUNNY;
         }
     }

@@ -10,6 +10,20 @@
         <item name="android:textSize">16dp</item>
         <item name="android:textStyle">bold</item>
     </style>
+    <style name="BigFieldStyle"  parent="FieldStyle">
+        <item name="android:textSize">18dp</item>
+    </style>
+    <style name="ValueStyle" >
+        <item name="android:textSize">32dp</item>
+    <!--    <item name="android:textStyle">bold</item>-->
+        <item name="android:textColor">@color/actionBarText</item>
+    </style>
+
+    <style name="UnitStyle" >
+        <item name="android:textSize">18dp</item>
+    <!--    <item name="android:textStyle">bold</item>-->
+        <item name="android:textColor">@color/actionBarText</item>
+    </style>
 
     <style name="LayoutCardStyle" parent="Widget.MaterialComponents.CardView">
         <item name="android:background">@drawable/card_shape</item>
