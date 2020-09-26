@@ -281,23 +281,38 @@ public class Util {
         return dataSet;
     }
 
-    public static Weather getPrediction(DateTime currentDateTime,DataSet dataSet) {
-        List<DataEntry> hourData=dataSet.getPreviousHours(currentDateTime,1);
-        DataEntry mostRecentEntry=hourData.get(hourData.size()-1);
+    public static Weather getPrediction(DateTime currentDateTime, DataSet dataSet) {
+        List<DataEntry> hourData=dataSet.getPreviousHours(currentDateTime, 1);
+        DataEntry mostRecentEntry=hourData.get(hourData.size() - 1);
+
+        if(mostRecentEntry.getPressure()>968) {
+            return Weather.SUNNY;
+        }
+        else if(mostRecentEntry.getPressure()<963) {
+            if(mostRecentEntry.getPressure()<960) {
+                return Weather.RAIN_HEAVY;
+            }
+            else {
+                return Weather.RAIN_LIGHT;
+            }
+        }
+
         List<Float> pressureValues=Stream.of(hourData).map(entry -> entry.getPressure()).toList();
         float pressureDifSum=0;
         //15min between each entry
         for(int t=1; t<pressureValues.size(); t++) {
             float diff=pressureValues.get(t) - pressureValues.get(t - 1);
-                pressureDifSum+=diff;
+            pressureDifSum+=diff;
         }
-        System.out.println("Last hour PressDiffSum:" +pressureDifSum);
+        System.out.println("Last hour PressDiffSum:" + pressureDifSum);
+
         // Fast changing Pressure
         if(Math.abs(pressureDifSum)>1.0) {
             //Pressure going up fast
             if(pressureDifSum>0) {
-                if(mostRecentEntry.getBrightness() < 500)
+                if(mostRecentEntry.getBrightness()<500) {
                     return Weather.CLEAR_NIGHT;
+                }
                 return Weather.SUNNY;
             }
             //Pressure going down fast
@@ -311,13 +326,14 @@ public class Util {
             }
         }
         // Slower changing pressure
-        else{
+        else {
             // Medium fast negative Pressure
-            if(Math.abs(pressureDifSum) > 0.5 && pressureDifSum< 0.0){
+            if(Math.abs(pressureDifSum)>0.5 && pressureDifSum<0.0) {
                 return Weather.CLOUDY;
             }
-            if(mostRecentEntry.getBrightness() < 500)
+            if(mostRecentEntry.getBrightness()<500) {
                 return Weather.CLEAR_NIGHT;
+            }
             return Weather.SUNNY;
         }
     }

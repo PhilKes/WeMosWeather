@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
     public static final boolean DEBUG_LAYOUT=false;
 
     public static final String TAG="WeMosWeather";
-    public static final int UPDATE_DELAY=20000;
+    public static final int UPDATE_DELAY_MILLIS=60000;
 
     private DataSlider tempSlider;
     private DataSlider humSlider;
@@ -146,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
                             response -> {
                                 Log.d(TAG, "initial Thingspeak Data: " + response);
                                 dataSet=Util.gson.fromJson(response.toString(), DataSet.class);
-                                setupThingspeakUpdates(UPDATE_DELAY);
+                                setupThingspeakUpdates(UPDATE_DELAY_MILLIS);
                                 runOnUiThread(() -> {
                                     updateDataUI();
                                     hideProgressBar();

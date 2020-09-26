@@ -1,5 +1,8 @@
 package com.philkes.wemosweather.thingspeak;
 
+import android.provider.ContactsContract;
+
+import com.annimon.stream.Collector;
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
 import com.google.gson.JsonArray;
@@ -30,6 +33,14 @@ import java.util.TreeSet;
 public class DataSet {
     private TreeMap<LocalDate, DayData> data=new TreeMap<>();
 
+
+    public DataSet() {
+    }
+
+    private DataSet(TreeMap<LocalDate, DayData> data) {
+        this.data=data;
+    }
+
     public boolean addEntry(DataEntry dataEntry) {
         LocalDate dataLocalDate=dataEntry.getTime().toLocalDate();
         DayData dayData=getOrAddDayData(dataLocalDate);
@@ -41,7 +52,6 @@ public class DataSet {
                 data.lastEntry();
         return latestDayData==null ? null : latestDayData.getValue().getNewestData();
     }
-
 
     public DayData getOrAddDayData(LocalDate date) {
         if(data.containsKey(date)) {
@@ -68,6 +78,10 @@ public class DataSet {
         return data.keySet();
     }
 
+    public void setData(TreeMap<LocalDate, DayData> data) {
+        this.data=data;
+    }
+
     public List<DayData> getPreviousDays(DateTime dateTime, int pastDays) {
         DateTime minTime=dateTime.minusDays(pastDays);
         List<DayData> dayData=new ArrayList<>();
@@ -80,7 +94,8 @@ public class DataSet {
         for(int i=0; i<pastDays; i++) {
             if(allDays.size() - 1 - i >= 0) {
                 dayData.add(allDays.get(allDays.size() - 1 - i));
-            }else{
+            }
+            else {
                 break;
             }
         }
@@ -95,6 +110,15 @@ public class DataSet {
         return Stream.of(getPreviousDays(dateTime, 2)).map(dayData -> dayData.getData())
                 .flatMap(Stream::of)
                 .filter(entry -> entry.getTime().isAfter(minTime) && entry.getTime().isBefore(dateTime)).toList();
+    }
+
+    public DataSet subSet(LocalDate from, LocalDate to) {
+        TreeMap<LocalDate, DayData> map=new TreeMap<>();
+        DataSet subSet=new DataSet(map);
+        Stream.of(data.entrySet())
+                .filter(entry -> entry.getKey().compareTo(from) >= 0 && entry.getKey().compareTo(to)<=0)
+                .forEach(entry -> map.put(entry.getKey(), entry.getValue()));
+        return subSet;
     }
 
     /**
