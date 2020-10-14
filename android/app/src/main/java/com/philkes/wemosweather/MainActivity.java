@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
                 ChartUtils.COLOR_RED,
                 findViewById(R.id.valueTemperature),
                 findViewById(R.id.temperatureUnit)
-                );
+        );
         //.setRequestQueue(queue)
         //.setUpdateWithHTTP("temperature", 3000);
 
@@ -176,10 +176,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateWeather(DateTime currentDateTime) {
-        Weather weatherPrediction=Util.getPrediction(currentDateTime,dataSet);
+        Weather weatherPrediction=Util.getPrediction(currentDateTime, dataSet);
         runOnUiThread(() -> {
-            weatherImage.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), weatherPrediction.drawableId));
-            textWeather.setText(weatherPrediction.text);
+            weatherImage.setImageDrawable(weatherPrediction==null ? null : ContextCompat.getDrawable(getApplicationContext(), weatherPrediction.drawableId));
+            textWeather.setText(weatherPrediction==null ? "" : weatherPrediction.text);
         });
     }
 

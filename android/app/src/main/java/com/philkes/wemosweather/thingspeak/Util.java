@@ -283,6 +283,8 @@ public class Util {
 
     public static Weather getPrediction(DateTime currentDateTime, DataSet dataSet) {
         List<DataEntry> hourData=dataSet.getPreviousHours(currentDateTime, 1);
+        if(hourData.isEmpty())
+            return null;
         DataEntry mostRecentEntry=hourData.get(hourData.size() - 1);
 
         if(mostRecentEntry.getPressure()>968) {
