@@ -287,6 +287,10 @@ public class Util {
             return null;
         DataEntry mostRecentEntry=hourData.get(hourData.size() - 1);
 
+        if(mostRecentEntry.getHumidity() > 80){
+            return Weather.RAIN_LIGHT;
+        }
+
         if(mostRecentEntry.getPressure()>968) {
             return Weather.SUNNY;
         }
