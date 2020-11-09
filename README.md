@@ -8,6 +8,7 @@
 * [BME 280](https://de.aliexpress.com/item/32801639254.html?src=google&src=google&albch=shopping&acnt=494-037-6276&isdl=y&slnk=&plac=&mtctp=&albbt=Gploogle_7_shopping&aff_atform=google&aff_short_key=UneMJZVf&&albagn=888888&albcp=1705854617&albag=67310370915&trgt=743612850714&crea=de32801639254&netw=u&device=c&albpg=743612850714&albpd=de32801639254&gclid=EAIaIQobChMIqMSEpN7e6gIVkLt3Ch35YAZTEAQYASABEgLxBfD_BwE&gclsrc=aw.ds)
 * [WeMos D1 Mini](https://docs.wemos.cc/en/latest/d1/d1_mini.html)
 * Light Sensor
+* 3.7V Lithium Ion Battery 18650
 
 ## Sketch
 * Arduino .ino Sketch for WeMos D1 mini/ESP ([sketch_solar_weather_thingspeak](/sketch_solar_weather_thingspeak))
