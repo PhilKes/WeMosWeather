@@ -51,7 +51,7 @@
 
     <?xml version="1.0" encoding="utf-8"?>
     <resources>
-        <item name="THINGSPEAK_READ_KEY" type="string"><YOUR_THINGSPEAK_CHANNEL_READ_KEY>/item>
+        <item name="THINGSPEAK_READ_KEY" type="string"><YOUR_THINGSPEAK_CHANNEL_READ_KEY></item>
         <item name="THINGSPEAK_CHANNEL" type="string"><YOUR_THINGSPEAK_CHANNEL_ID></item>
     </resources>
 
